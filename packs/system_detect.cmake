@@ -1,0 +1,33 @@
+
+set(HOST_DEF "")
+
+if(CMAKE_HOST_APPLE)
+	set(HOST_DEF "APP_SYSTEM_IS_MACOS")
+endif()
+if(CMAKE_HOST_LINUX)
+	set(HOST_DEF "APP_SYSTEM_IS_LINUX")
+endif()
+if(CMAKE_HOST_WIN32)
+	set(HOST_DEF "APP_SYSTEM_IS_MSWIN")
+endif()
+
+set(COMPILER_DEF "")
+set(COMPILER_FLAGS "")
+
+if(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
+	set(COMPILER_DEF "APP_COMPILER_IS_GCC")
+	set(COMPILER_FLAGS "-Wall")
+endif()
+if(${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang")
+	set(COMPILER_DEF "APP_COMPILER_IS_CLANG")
+	set(COMPILER_FLAGS "-Wall")
+endif()
+if(${CMAKE_CXX_COMPILER_ID} STREQUAL "MSVC")
+	set(COMPILER_DEF "APP_COMPILER_IS_MSVC")
+	set(COMPILER_FLAGS "/Wall")
+endif()
+
+function(set_target_env_options Target)
+	target_compile_definitions(${Target} PRIVATE ${HOST_DEF} ${COMPILER_DEF})
+	target_compile_options(${Target} PRIVATE ${COMPILER_FLAGS})
+endfunction()
