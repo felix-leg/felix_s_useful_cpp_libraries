@@ -37,7 +37,10 @@ enable_testing()
 include("../system_detect.cmake")
 
 #the library
-add_library(tested_lib "src/math_utils.hpp" "src/math_utils.cpp")
+add_library(tested_lib
+	"src/angle.hpp" "src/angle.cpp"
+	"src/numbers.hpp" "src/numbers.cpp"
+)
 target_include_directories(tested_lib PRIVATE "${CMAKE_SOURCE_DIR}/src")
 set_target_env_options(tested_lib)
 

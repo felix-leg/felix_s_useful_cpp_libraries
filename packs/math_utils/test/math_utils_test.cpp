@@ -25,11 +25,15 @@ OTHER DEALINGS IN THE SOFTWARE.
 For more information, please refer to <https://unlicense.org>
 
 */
+
 #define BOOST_TEST_DYN_LINK
-#define BOOST_TEST_MODULE text_utils_test
+#define BOOST_TEST_MODULE math_utils_test
 #include <boost/test/unit_test.hpp>
 
-#include "../src/math_utils.hpp"
+#include <cmath>
+
+#include "../src/angle.hpp"
+#include "../src/numbers.hpp"
 
 BOOST_AUTO_TEST_CASE( angle_compare ) {
 	auto a1 = math::degrees(180.0f);
@@ -43,4 +47,39 @@ BOOST_AUTO_TEST_CASE( angle_compare ) {
 	BOOST_TEST_REQUIRE( (a1 != a2) );
 }
 
+BOOST_AUTO_TEST_CASE( clamping ) {
+	float valA = math::clamp_value(0.5f, 0.0f, 1.0f);
+	float valB = math::clamp_value(-1.0f, 0.0f, 1.0f);
+	float valC = math::clamp_value(2.0f, 0.0f, 1.0f);
+	float valD = math::clamp_value(2.0f, 1.0f, 0.0f);
+	
+	BOOST_TEST_REQUIRE( valA == 0.5f );
+	BOOST_TEST_REQUIRE( valB == 0.0f );
+	BOOST_TEST_REQUIRE( valC == 1.0f );
+	BOOST_TEST_REQUIRE( valD == 1.0f );
+}
+
+BOOST_AUTO_TEST_CASE( range_test ) {
+	BOOST_TEST_REQUIRE( math::is_in_range(1,0,2) );
+	BOOST_TEST_REQUIRE( !math::is_in_range(5,0,2) );
+	BOOST_TEST_REQUIRE( math::is_in_range(1,2,0) );
+	BOOST_TEST_REQUIRE( !math::is_in_range(5,2,0) );
+}
+
+BOOST_AUTO_TEST_CASE( lerp_test ) {
+	float a = 1.0f;
+	float b = 1e8f;
+	
+	BOOST_TEST_REQUIRE( (a == math::lerp(a,b, 0.0f)) );
+	BOOST_TEST_REQUIRE( (b == math::lerp(a,b, 1.0f)) );
+	BOOST_TEST_REQUIRE( (b == math::lerp(b,a, 0.0f)) );
+	BOOST_TEST_REQUIRE( (a == math::lerp(b,a, 1.0f)) );
+	
+	BOOST_TEST_REQUIRE( math::lerp(a,b,INFINITY) == INFINITY );
+}
+
+BOOST_AUTO_TEST_CASE( map_range_test ) {
+	BOOST_TEST_REQUIRE( math::map_range(1,0,2,-1,1) == 0 );
+	BOOST_TEST_REQUIRE( math::map_range(INFINITY, 0.0f, 2.0f, -1.0f, 1.0f) == INFINITY );
+}
 
