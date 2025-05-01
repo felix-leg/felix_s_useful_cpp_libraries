@@ -8,3 +8,6 @@ They are:
 * **math_utils**: Math objects
 * **primitives**: Operations on basic C++ types
 * **text**: Text modifications and queries
+
+## Issues
+If you find any bug you are free to open an issue. I'd be glad!

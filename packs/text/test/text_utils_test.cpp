@@ -35,6 +35,7 @@ For more information, please refer to <https://unlicense.org>
 #include "../src/split.hpp"
 #include "../src/just.hpp"
 #include "../src/checks.hpp"
+#include "../src/trim.hpp"
 
 #include <string>
 #include <vector>
@@ -388,5 +389,75 @@ BOOST_AUTO_TEST_CASE( txt_is_title_case ) {
 	
 	BOOST_TEST_REQUIRE( ! txt::is_title_case(U'a') );
 	BOOST_TEST_REQUIRE( ! txt::is_title_case(U'ą') );
+}
+
+BOOST_AUTO_TEST_CASE( left_trim_text_unicode ) {
+	std::u32string str = U"   abc";
+	
+	auto result = txt::ltrim(str);
+	
+	BOOST_TEST_REQUIRE( (result == U"abc") );
+}
+
+BOOST_AUTO_TEST_CASE( right_trim_text_unicode ) {
+	std::u32string str = U"abc   ";
+	
+	auto result = txt::rtrim(str);
+	
+	BOOST_TEST_REQUIRE( (result == U"abc") );
+}
+
+BOOST_AUTO_TEST_CASE( both_trim_text_unicode ) {
+	std::u32string str = U"   abc   ";
+	
+	auto result = txt::trim(str);
+	
+	BOOST_TEST_REQUIRE( (result == U"abc") );
+}
+
+BOOST_AUTO_TEST_CASE( trim_all_space_text_unicode ) {
+	std::u32string str = U"    ";
+	
+	auto l_result = txt::ltrim(str);
+	BOOST_TEST_REQUIRE( (l_result == U"") );
+	auto r_result = txt::rtrim(str);
+	BOOST_TEST_REQUIRE( (r_result == U"") );
+	auto b_result = txt::trim(str);
+	BOOST_TEST_REQUIRE( (b_result == U"") );
+}
+
+BOOST_AUTO_TEST_CASE( left_trim_text ) {
+	std::string str = "   abc";
+	
+	auto result = txt::ltrim(str);
+	
+	BOOST_TEST_REQUIRE( (result == "abc") );
+}
+
+BOOST_AUTO_TEST_CASE( right_trim_text ) {
+	std::string str = "abc   ";
+	
+	auto result = txt::rtrim(str);
+	
+	BOOST_TEST_REQUIRE( (result == "abc") );
+}
+
+BOOST_AUTO_TEST_CASE( both_trim_text ) {
+	std::string str = "   abc   ";
+	
+	auto result = txt::trim(str);
+	
+	BOOST_TEST_REQUIRE( (result == "abc") );
+}
+
+BOOST_AUTO_TEST_CASE( trim_all_space_text ) {
+	std::string str = "    ";
+	
+	auto l_result = txt::ltrim(str);
+	BOOST_TEST_REQUIRE( (l_result == "") );
+	auto r_result = txt::rtrim(str);
+	BOOST_TEST_REQUIRE( (r_result == "") );
+	auto b_result = txt::trim(str);
+	BOOST_TEST_REQUIRE( (b_result == "") );
 }
 

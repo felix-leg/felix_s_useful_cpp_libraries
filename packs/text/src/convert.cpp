@@ -58,13 +58,14 @@ namespace txt {
 			auto in_buf = const_cast<char*>(reinterpret_cast<const char*>(from.c_str()));
 			size_t in_avail = from.length() * sizeof(char32_t);
 			auto out_a = new char[in_avail+1];
+			auto out_a_size = in_avail;
 			out_a[in_avail] = '\0';
 			auto out_buf = out_a;
 			size_t out_avail = in_avail;
 			
 			size_t i_result = iconv(i_state, &in_buf, &in_avail, &out_buf, &out_avail);
 			if( i_result != SIZE_T_ERR ) {
-				std::string out_str{out_a};
+				std::string out_str{out_a, out_a_size - out_avail};
 				delete[] out_a;
 				iconv_close(i_state);
 				return out_str;
@@ -100,12 +101,13 @@ namespace txt {
 			auto in_buf = const_cast<char*>(from.c_str());
 			size_t in_avail = from.length() + 1;
 			auto out_a = new char32_t[in_avail];
+			auto out_a_size = in_avail-1;
 			auto out_buf = reinterpret_cast<char*>(out_a);
 			size_t out_avail = in_avail * sizeof(char32_t);
 			
 			size_t i_result = iconv(i_state, &in_buf, &in_avail, &out_buf, &out_avail);
 			if( i_result != SIZE_T_ERR ) {
-				std::u32string out_str{out_a};
+				std::u32string out_str{out_a, out_a_size - (out_avail / sizeof(char32_t))};
 				delete[] out_a;
 				iconv_close(i_state);
 				return out_str;
@@ -145,13 +147,14 @@ namespace txt {
 			auto in_buf = const_cast<char*>(reinterpret_cast<const char*>(from.data()));
 			size_t in_avail = from.length() * sizeof(char32_t);
 			auto out_a = new char[in_avail+1];
+			auto out_a_size = in_avail;
 			out_a[in_avail] = '\0';
 			auto out_buf = out_a;
 			size_t out_avail = in_avail;
 			
 			size_t i_result = iconv(i_state, &in_buf, &in_avail, &out_buf, &out_avail);
 			if( i_result != SIZE_T_ERR ) {
-				std::string out_str{out_a};
+				std::string out_str{out_a, out_a_size - out_avail};
 				delete[] out_a;
 				iconv_close(i_state);
 				return out_str;
@@ -187,12 +190,13 @@ namespace txt {
 			auto in_buf = const_cast<char*>(from.data());
 			size_t in_avail = from.length() + 1;
 			auto out_a = new char32_t[in_avail];
+			auto out_a_size = in_avail-1;
 			auto out_buf = reinterpret_cast<char*>(out_a);
 			size_t out_avail = in_avail * sizeof(char32_t);
 			
 			size_t i_result = iconv(i_state, &in_buf, &in_avail, &out_buf, &out_avail);
 			if( i_result != SIZE_T_ERR ) {
-				std::u32string out_str{out_a};
+				std::u32string out_str{out_a, out_a_size - (out_avail / sizeof(char32_t))};
 				delete[] out_a;
 				iconv_close(i_state);
 				return out_str;
