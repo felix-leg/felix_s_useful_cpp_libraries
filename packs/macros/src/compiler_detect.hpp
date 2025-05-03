@@ -35,14 +35,14 @@ For more information, please refer to <https://unlicense.org>
 #endif
 
 //GCC
-#if (COMPILER_HAS_BEEN_DETECTED == 0) && defined(__GNUC__)
+#if (COMPILER_HAS_BEEN_DETECTED == 0) && ( defined(__GNUC__) && !defined(__clang__) && !defined(__ICC) && !defined(__CUDACC__) && !defined(__LCC__) )
 	#undef COMPILER_HAS_BEEN_DETECTED
 	#define COMPILER_HAS_BEEN_DETECTED 1
 	#define APP_COMPILER_IS_GCC
 #endif
 
 //MSVC
-#if (COMPILER_HAS_BEEN_DETECTED == 0) && defined(_MSC_VER)
+#if (COMPILER_HAS_BEEN_DETECTED == 0) && ( defined(_MSC_VER) && !defined(__clang__) )
 	#undef COMPILER_HAS_BEEN_DETECTED
 	#define COMPILER_HAS_BEEN_DETECTED 1
 	#define APP_COMPILER_IS_MSVC

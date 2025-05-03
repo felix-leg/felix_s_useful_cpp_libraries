@@ -48,4 +48,11 @@ For more information, please refer to <https://unlicense.org>
 	#define APP_SYSTEM_IS_MSWIN
 #endif
 
+//PS4
+#if (OS_HAS_BEEN_DETECTED == 0) && defined(__ORBIS__)
+	#undef OS_HAS_BEEN_DETECTED
+	#define OS_HAS_BEEN_DETECTED 1
+	#define APP_SYSTEM_IS_PS4
+#endif
+
 #undef OS_HAS_BEEN_DETECTED
