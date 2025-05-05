@@ -84,6 +84,15 @@ BOOST_AUTO_TEST_CASE( map_range_test ) {
 	BOOST_TEST_REQUIRE( math::map_range(INFINITY, 0.0f, 2.0f, -1.0f, 1.0f) == INFINITY );
 }
 
+BOOST_AUTO_TEST_CASE( gcd_calc_pairs ) {
+	BOOST_TEST_REQUIRE( math::gcd({8,12}) == 4 );
+	BOOST_TEST_REQUIRE( math::gcd({54,24}) == 6 );
+	BOOST_TEST_REQUIRE( math::gcd({60,24}) == 12 );
+	BOOST_TEST_REQUIRE( math::gcd({42,56}) == 14 );
+	BOOST_TEST_REQUIRE( math::gcd({9,28}) == 1 );
+	BOOST_TEST_REQUIRE( math::gcd({48,18}) == 6 );
+}
+
 BOOST_AUTO_TEST_CASE( gcd_calc ) {
 	const int c_val = 14; //correct value
 	

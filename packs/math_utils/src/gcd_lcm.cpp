@@ -159,11 +159,20 @@ namespace math {
 				auto min_val = *(std::min_element(values.begin(), values.end()));
 				std::forward_list<unsigned long long> next_values;
 				values_num = 0;
+				bool add_min_again = false;
 				
 				for(auto value : values) {
 					auto next_val = value % min_val;
-					if( next_val == 0 ) continue;
+					if( next_val == 0 ) {
+						continue;
+					} else {
+						add_min_again = true;
+					}
 					next_values.push_front(next_val);
+					++values_num;
+				}
+				if( add_min_again ) {
+					next_values.push_front(min_val);
 					++values_num;
 				}
 				if( next_values.empty() ) {
