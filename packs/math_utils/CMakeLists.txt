@@ -39,7 +39,8 @@ include("../system_detect.cmake")
 #the library
 add_library(tested_lib
 	"src/angle.hpp" "src/angle.cpp"
-	"src/numbers.hpp" "src/numbers.cpp"
+	"src/ranges_calc.hpp" "src/ranges_calc.cpp"
+	"src/gcd_lcm.hpp" "src/gcd_lcm.cpp"
 )
 target_include_directories(tested_lib PRIVATE "${CMAKE_SOURCE_DIR}/src")
 set_target_env_options(tested_lib)
