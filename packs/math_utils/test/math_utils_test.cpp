@@ -33,7 +33,8 @@ For more information, please refer to <https://unlicense.org>
 #include <cmath>
 
 #include "../src/angle.hpp"
-#include "../src/numbers.hpp"
+#include "../src/ranges_calc.hpp"
+#include "../src/gcd_lcm.hpp"
 
 BOOST_AUTO_TEST_CASE( angle_compare ) {
 	auto a1 = math::degrees(180.0f);
@@ -83,3 +84,27 @@ BOOST_AUTO_TEST_CASE( map_range_test ) {
 	BOOST_TEST_REQUIRE( math::map_range(INFINITY, 0.0f, 2.0f, -1.0f, 1.0f) == INFINITY );
 }
 
+BOOST_AUTO_TEST_CASE( gcd_calc ) {
+	const int c_val = 14; //correct value
+	
+	auto gcd_0 = math::gcd<int>({});
+	BOOST_TEST_REQUIRE( gcd_0 == 0 );
+	
+	auto gcd_1 = math::gcd({c_val});
+	BOOST_TEST_REQUIRE( gcd_1 == c_val );
+	
+	auto gcd_2 = math::gcd({2 * c_val, 3 * c_val});
+	BOOST_TEST_REQUIRE( gcd_2 == c_val );
+	
+	auto gcd_3 = math::gcd({2 * c_val, 3 * c_val, 5 * c_val});
+	BOOST_TEST_REQUIRE( gcd_3 == c_val );
+	
+	auto gcd_4 = math::gcd({2 * c_val, 3 * c_val, 5 * c_val, 7 * c_val});
+	BOOST_TEST_REQUIRE( gcd_4 == c_val );
+	
+	auto gcd_5 = math::gcd({2 * c_val, 3 * c_val, 5 * c_val, 7 * c_val, 11 * c_val});
+	BOOST_TEST_REQUIRE( gcd_5 == c_val );
+	
+	auto gcd_6 = math::gcd({2 * c_val, 3 * c_val, 5 * c_val, 7 * c_val, 11 * c_val, 13 * c_val});
+	BOOST_TEST_REQUIRE( gcd_6 == c_val );
+}
