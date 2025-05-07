@@ -1,30 +1,3 @@
-/*
-This is free and unencumbered software released into the public domain.
-
-Anyone is free to copy, modify, publish, use, compile, sell, or
-distribute this software, either in source code form or as a compiled
-binary, for any purpose, commercial or non-commercial, and by any
-means.
-
-In jurisdictions that recognize copyright laws, the author or authors
-of this software dedicate any and all copyright interest in the
-software to the public domain. We make this dedication for the benefit
-of the public at large and to the detriment of our heirs and
-successors. We intend this dedication to be an overt act of
-relinquishment in perpetuity of all present and future rights to this
-software under copyright law.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR
-OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
-ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-OTHER DEALINGS IN THE SOFTWARE.
-
-For more information, please refer to <https://unlicense.org>
-
-*/
 #include "files.hpp"
 
 #include <utility>
@@ -135,7 +108,6 @@ namespace files {
 	bool Path::is(Perms perm) const noexcept {
 		if( ! exists() ) { return false; }
 		#ifdef APP_SYSTEM_IS_MSWIN
-		//XXX: UNTESTED!
 		int mode;
 		switch( perm ) {
 			case READABLE:
@@ -145,7 +117,7 @@ namespace files {
 				mode = 2;
 				break;
 			case EXECUTABLE:
-				return true; //TODO: how to check that?
+				return true; //impossible to check on MS Windows
 			default:
 				std::unreachable();
 		}
@@ -204,7 +176,7 @@ namespace files {
 		std::wstring name{elem.native()};
 		
 		if(name[name.size()-1] == L' ' || name[name.size()-1] == L'.') {
-			// Filename shouldn't end with space or dot on Windows
+			// Filename shouldn't end with space or dot on MS Windows
 			return false;
 		}
 		
@@ -216,6 +188,10 @@ namespace files {
 		#else
 		static const char FORBIDDEN_CHARACTERS[] = {
 			0, '/'
+			/*
+			'#', '$', '%', '!', '&', '\'', '"', '{', '}',
+			':', '\\', '@', '<', '>', '+', '`', '*', '|',
+			'?', '=', '/' //*/
 		};
 		std::string name{elem.native()};
 		
@@ -240,7 +216,11 @@ namespace files {
 		if( exists() ) { return; }
 		parent().mkdir(true);
 		
+		#ifdef APP_SYSTEM_IS_MSWIN
+		std::FILE * f = _wfopen(native(), L"wb");
+		#else
 		std::FILE * f = std::fopen(native(), "wb");
+		#endif
 		std::fclose(f);
 	}
 	
@@ -339,7 +319,7 @@ namespace files {
 				delete[] result;
 				return "";
 			} else {
-				std::string result_str{result, required_size};
+				std::string result_str{result, static_cast<uint64_t>(required_size)};
 				delete[] result;
 				return result_str;
 			}
@@ -352,9 +332,8 @@ namespace files {
 	Path get_exe_path(bool full) noexcept {
 		#ifdef APP_SYSTEM_IS_MSWIN
 		wchar_t w_result[ MAX_PATH ];
-		DWORD result_size = GetModuleFileName( nullptr, w_result, MAX_PATH );
-		
-		auto result = std::filesystem::path(mswin_to_utf8(w_result, result_size),std::filesystem::path::format::native_format);
+		DWORD result_size = GetModuleFileNameW( nullptr, w_result, MAX_PATH );
+		auto result = std::filesystem::path(mswin_to_utf8(w_result, result_size), std::filesystem::path::format::native_format);
 		#else
 		char c_result[ PATH_MAX ];
 		ssize_t count = readlink( "/proc/self/exe", c_result, PATH_MAX ); //Linux
