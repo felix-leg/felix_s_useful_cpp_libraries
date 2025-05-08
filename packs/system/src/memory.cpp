@@ -74,7 +74,7 @@ namespace memory {
 	unsigned long long get_total_RAM() noexcept {
 		#ifndef APP_SYSTEM_IS_MSWIN
 		std::ifstream meminfo{"/proc/meminfo"};
-		const char searched[] = "MemTotal:"
+		const char searched[] = "MemTotal:";
 		char line_buf[256];
 		unsigned long long value = 0ull;
 		std::string line{""};
