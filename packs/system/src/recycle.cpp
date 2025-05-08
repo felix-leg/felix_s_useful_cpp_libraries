@@ -125,7 +125,7 @@ bool move_to_bin(const std::filesystem::path& file_path) noexcept {
 	static SEL fm_trash_url_sel = sel_registerName("trashItemAtURL:resultingItemURL:error:");
 	static SEL ns_url_make_sel = sel_registerName("fileURLWithPath:");
 	
-	id file_manager_class = reinterpret_cast<id>(objc_getClass("NSFileManager "));
+	id file_manager_class = reinterpret_cast<id>(objc_getClass("NSFileManager"));
 	id file_manager = reinterpret_cast<id (*)(id,SEL)>(objc_msgSend)\
 		(file_manager_class, fm_default_manager_sel);
 	
