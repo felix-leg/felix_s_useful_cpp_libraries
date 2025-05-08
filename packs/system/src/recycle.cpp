@@ -40,13 +40,21 @@ For more information, please refer to <https://unlicense.org>
 struct COM_error {};
 #endif
 
+#ifdef APP_SYSTEM_IS_MACOS
+#     include <CoreFoundation/CoreFoundation.h>
+#     include <objc/objc.h>
+#     include <objc/objc-runtime.h>
+
+#include <string>
+#endif
+
 bool move_to_bin(const std::filesystem::path& file_path) noexcept {
 	#ifdef APP_SYSTEM_IS_LINUX
 	GFile * file = g_file_new_for_path(file_path.c_str());
 	gboolean ok = g_file_trash(file, nullptr, nullptr);
 	g_object_unref((GObject*)file);
 	return ok;
-	#endif
+	#endif /* ! APP_SYSTEM_IS_LINUX */
 	
 	#ifdef APP_SYSTEM_IS_MSWIN
 	bool uninit_com = true;
@@ -109,5 +117,34 @@ bool move_to_bin(const std::filesystem::path& file_path) noexcept {
 		CoUninitialize();
 	}
 	return fn_result;
-	#endif
+	#endif /* ! APP_SYSTEM_IS_MSWIN */
+	
+	#ifdef APP_SYSTEM_IS_MACOS
+	//XXX: not tested!
+	static SEL fm_default_manager_sel = sel_registerName("defaultManager");
+	static SEL fm_trash_url_sel = sel_registerName("trashItemAtURL:resultingItemURL:error:");
+	static SEL ns_url_make_sel = sel_registerName("fileURLWithPath:");
+	
+	id file_manager_class = reinterpret_cast<id>(objc_getClass("NSFileManager "));
+	id file_manager = reinterpret_cast<id (*)(id,SEL)>(objc_msgSend)\
+		(file_manager_class, fm_default_manager_sel);
+	
+	std::string file_path_url = file_path.generic_string();
+	file_path_url = "file://" + file_path_url;
+	CFStringRef file_path_cstr = CFStringCreateWithCString(
+		nullptr, file_path_url.c_str(), kCFStringEncodingUTF8
+	);
+	
+	id nsUrl = reinterpret_cast<id>(objc_getClass("NSURL"));
+	id file_url = reinterpret_cast<id (*)(id,SEL,CFStringRef)>(objc_msgSend)\
+		(nsUrl,ns_url_make_sel,file_path_cstr);
+	
+	bool op_result = reinterpret_cast<bool (*)(id,SEL,id,id,id)>\
+		(file_manager, fm_trash_url_sel, file_url, Nil, Nil);
+	
+	CFRelease(file_url);
+	CFRelease(file_path_cstr);// ???
+	
+	return op_result;
+	#endif /* ! APP_SYSTEM_IS_MACOS */
 }
