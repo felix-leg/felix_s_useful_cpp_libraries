@@ -43,7 +43,7 @@ namespace memory {
 	unsigned long long get_free_RAM() noexcept {
 		#ifndef APP_SYSTEM_IS_MSWIN
 		std::ifstream meminfo{"/proc/meminfo"};
-		#define SEARCHED "MemAvailable:"
+		const char searched[] = "MemAvailable:";
 		char line_buf[256];
 		unsigned long long value = 0ull;
 		std::string line{""};
@@ -52,16 +52,15 @@ namespace memory {
 			std::getline(meminfo, line);
 			
 			if( std::sscanf(line.c_str(), "%255s %llu kB", line_buf, &value) == 2 ) {
-				if( std::strncmp(SEARCHED, line_buf, sizeof(SEARCHED) - 1) == 0 ) {
+				if( std::strncmp(searched, line_buf, sizeof(searched) - 1) == 0 ) {
 					//Found!
 					return KB(value);
 				}
 			}
 		}
 		return 0ull; //not found
-		#undef SEARCHED
 		
-		#else
+		#else /* APP_SYSTEM_IS_MSWIN */
 		
 		MEMORYSTATUSEX statex;
 		statex.dwLength = sizeof (statex);
@@ -75,7 +74,7 @@ namespace memory {
 	unsigned long long get_total_RAM() noexcept {
 		#ifndef APP_SYSTEM_IS_MSWIN
 		std::ifstream meminfo{"/proc/meminfo"};
-		#define SEARCHED "MemTotal:"
+		const char searched[] = "MemTotal:"
 		char line_buf[256];
 		unsigned long long value = 0ull;
 		std::string line{""};
@@ -84,16 +83,15 @@ namespace memory {
 			std::getline(meminfo, line);
 			
 			if( std::sscanf(line.c_str(), "%255s %llu kB", line_buf, &value) == 2 ) {
-				if( std::strncmp(SEARCHED, line_buf, sizeof(SEARCHED) - 1) == 0 ) {
+				if( std::strncmp(searched, line_buf, sizeof(searched) - 1) == 0 ) {
 					//Found!
 					return KB(value);
 				}
 			}
 		}
 		return 0ull; //not found
-		#undef SEARCHED
 		
-		#else
+		#else /* APP_SYSTEM_IS_MSWIN */
 		
 		MEMORYSTATUSEX statex;
 		statex.dwLength = sizeof (statex);
