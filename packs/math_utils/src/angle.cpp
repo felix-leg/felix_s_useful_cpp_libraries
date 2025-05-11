@@ -90,6 +90,19 @@ namespace math {
 		return !(*this == other);
 	}
 	
+	bool angle::equal_within(const angle& other, const angle& tolerance) noexcept {
+		float tol;
+		float diff;
+		if( is_deg ) {
+			diff = value - other.as_degrees();
+			tol = tolerance.as_degrees();
+		} else {
+			diff = value - other.as_radians();
+			tol = tolerance.as_radians();
+		}
+		return std::fabsf(diff) <= std::fabsf(tol);
+	}
+	
 	angle operator+(const angle& a, const angle& b) noexcept {
 		if( a.is_deg ) {
 			return {a.value + b.as_degrees(), true};
@@ -148,39 +161,67 @@ namespace math {
 	}
 	
 	angle angle::clamp360() const noexcept {
-		float nv = as_degrees();
+		float nv = value;
+		float v360;
+		if( is_deg ) {
+			v360 = 360.0f;
+		} else {
+			v360 = 2 * std::numbers::pi_v<float>;
+		}
+		
 		if( nv < 0.0f ) { nv = 0.0f; }
-		if( nv > 360.0f ) { nv = 360.0f; }
-		return {nv, true};
+		if( nv > v360 ) { nv = v360; }
+		return {nv, is_deg};
 	}
 	
 	angle angle::clamp180() const noexcept {
-		float nv = as_degrees();
-		if( nv < -180.0f ) { nv = -180.0f; }
-		if( nv > 180.0f ) { nv = 180.0f; }
-		return {nv, true};
+		float nv = value;
+		float v180;
+		if( is_deg ) {
+			v180 = 180.0f;
+		} else {
+			v180 = std::numbers::pi_v<float>;
+		}
+		
+		if( nv < -v180 ) { nv = -v180; }
+		if( nv > v180 ) { nv = v180; }
+		return {nv, is_deg};
 	}
 	
 	angle angle::norm360() const noexcept {
-		float nv = as_degrees();
+		float nv = value;
+		float v360;
+		if( is_deg ) {
+			v360 = 360.0f;
+		} else {
+			v360 = 2 * std::numbers::pi_v<float>;
+		}
+		
 		while( nv < 0.0f ) {
-			nv += 360.0f;
+			nv += v360;
 		}
-		while( nv > 360.0f ) {
-			nv -= 360.0f;
+		while( nv > v360 ) {
+			nv -= v360;
 		}
-		return {nv, true};
+		return {nv, is_deg};
 	}
 	
 	angle angle::norm180() const noexcept {
-		float nv = as_degrees();
-		while( nv < -180.0f ) {
-			nv += 360.0f;
+		float nv = value;
+		float v180;
+		if( is_deg ) {
+			v180 = 180.0f;
+		} else {
+			v180 = std::numbers::pi_v<float>;
 		}
-		while( nv > 180.0f ) {
-			nv -= 360.0f;
+		
+		while( nv < -v180 ) {
+			nv += 2 * v180;
 		}
-		return {nv, true};
+		while( nv > v180 ) {
+			nv -= 2 * v180;
+		}
+		return {nv, is_deg};
 	}
 	
 	float sin(const angle& a) {

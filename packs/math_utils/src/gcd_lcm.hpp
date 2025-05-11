@@ -30,6 +30,7 @@ For more information, please refer to <https://unlicense.org>
 #define FELIXS_PACK_MATH_UTILS_GCD_LCM_HPP
 #include <forward_list>
 #include <cstdint>
+#include <type_traits>
 #include <concepts>
 #include <initializer_list>
 
@@ -77,6 +78,22 @@ namespace math {
 		
 		for(auto value : i_list) {
 			calc.add(value);
+		}
+		calc.compute();
+		
+		return return_value;
+	}
+	
+	template<class IterB, class IterE>
+	requires requires(IterB it) {
+		requires std::integral<std::remove_cvref_t<decltype(*it)>>;
+	}
+	auto gcd(IterB it, IterE it_end) noexcept {
+		typename std::remove_cvref<decltype( *it )>::type return_value;
+		details::GCD_Calculator calc{return_value};
+		
+		for(; it != it_end; ++it) {
+			calc.add(*it);
 		}
 		calc.compute();
 		

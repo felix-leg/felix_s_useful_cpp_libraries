@@ -117,3 +117,9 @@ BOOST_AUTO_TEST_CASE( gcd_calc ) {
 	auto gcd_6 = math::gcd({2 * c_val, 3 * c_val, 5 * c_val, 7 * c_val, 11 * c_val, 13 * c_val});
 	BOOST_TEST_REQUIRE( gcd_6 == c_val );
 }
+
+BOOST_AUTO_TEST_CASE( gcd_from_vector ) {
+	std::vector v{2*14, 3*14, 5*14};
+	auto gcd_r = math::gcd(v.begin(), v.end());
+	BOOST_TEST_REQUIRE( gcd_r == 14 );
+}

@@ -51,6 +51,7 @@ namespace math {
 		
 		[[nodiscard]] bool operator==(const angle& other) const noexcept;
 		[[nodiscard]] bool operator!=(const angle& other) const noexcept;
+		[[nodiscard]] bool equal_within(const angle& other, const angle& tolerance) noexcept;
 		friend std::strong_ordering operator<=>(const angle& lhs, const angle& rhs) noexcept;
 	
 		friend angle operator+(const angle& a, const angle& b) noexcept;
