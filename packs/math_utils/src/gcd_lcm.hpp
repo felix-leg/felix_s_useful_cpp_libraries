@@ -29,6 +29,7 @@ For more information, please refer to <https://unlicense.org>
 #ifndef FELIXS_PACK_MATH_UTILS_GCD_LCM_HPP
 #define FELIXS_PACK_MATH_UTILS_GCD_LCM_HPP
 #include <forward_list>
+#include <list>
 #include <cstdint>
 #include <type_traits>
 #include <concepts>
@@ -46,6 +47,40 @@ namespace math {
 				I8, U8,
 				I16, U16,
 				I32, U32,
+				I64, U64,
+				ULL
+			} return_type;
+			union {
+				int8_t *i8; uint8_t *u8;
+				int16_t *i16; uint16_t *u16;
+				int32_t *i32; uint32_t *u32;
+				int64_t *i64; uint64_t *u64;
+				unsigned long long *uLL;
+			} return_ptr;
+			void return_value(unsigned long long val) noexcept;
+		public:
+			GCD_Calculator(int8_t& ret_val) noexcept; GCD_Calculator(uint8_t& ret_val) noexcept;
+			GCD_Calculator(int16_t& ret_val) noexcept; GCD_Calculator(uint16_t& ret_val) noexcept;
+			GCD_Calculator(int32_t& ret_val) noexcept; GCD_Calculator(uint32_t& ret_val) noexcept;
+			GCD_Calculator(int64_t& ret_val) noexcept; GCD_Calculator(uint64_t& ret_val) noexcept;
+			GCD_Calculator(unsigned long long& ret_val) noexcept;
+			
+			void add(int8_t val) noexcept; void add(uint8_t val) noexcept;
+			void add(int16_t val) noexcept; void add(uint16_t val) noexcept;
+			void add(int32_t val) noexcept; void add(uint32_t val) noexcept;
+			void add(int64_t val) noexcept; void add(uint64_t val) noexcept;
+			void add(unsigned long long val) noexcept;
+			
+			void compute() noexcept;
+		};//! class GCD_Calculator
+		
+		class LCM_Calculator final {
+		private:
+			std::list<unsigned long long> values;
+			enum {
+				I8, U8,
+				I16, U16,
+				I32, U32,
 				I64, U64
 			} return_type;
 			union {
@@ -56,10 +91,10 @@ namespace math {
 			} return_ptr;
 			void return_value(unsigned long long val) noexcept;
 		public:
-			GCD_Calculator(int8_t& ret_val) noexcept; GCD_Calculator(uint8_t& ret_val) noexcept;
-			GCD_Calculator(int16_t& ret_val) noexcept; GCD_Calculator(uint16_t& ret_val) noexcept;
-			GCD_Calculator(int32_t& ret_val) noexcept; GCD_Calculator(uint32_t& ret_val) noexcept;
-			GCD_Calculator(int64_t& ret_val) noexcept; GCD_Calculator(uint64_t& ret_val) noexcept;
+			LCM_Calculator(int8_t& ret_val) noexcept; LCM_Calculator(uint8_t& ret_val) noexcept;
+			LCM_Calculator(int16_t& ret_val) noexcept; LCM_Calculator(uint16_t& ret_val) noexcept;
+			LCM_Calculator(int32_t& ret_val) noexcept; LCM_Calculator(uint32_t& ret_val) noexcept;
+			LCM_Calculator(int64_t& ret_val) noexcept; LCM_Calculator(uint64_t& ret_val) noexcept;
 			
 			void add(int8_t val) noexcept; void add(uint8_t val) noexcept;
 			void add(int16_t val) noexcept; void add(uint16_t val) noexcept;
@@ -67,7 +102,7 @@ namespace math {
 			void add(int64_t val) noexcept; void add(uint64_t val) noexcept;
 			
 			void compute() noexcept;
-		};//! class GCD_Calculator
+		};//! class LCM_Calculator
 		
 	};//! namespace details
 	
@@ -91,6 +126,35 @@ namespace math {
 	auto gcd(IterB it, IterE it_end) noexcept {
 		typename std::remove_cvref<decltype( *it )>::type return_value;
 		details::GCD_Calculator calc{return_value};
+		
+		for(; it != it_end; ++it) {
+			calc.add(*it);
+		}
+		calc.compute();
+		
+		return return_value;
+	}
+	
+	template<std::integral Int>
+	Int lcm(std::initializer_list<Int> i_list) noexcept {
+		Int return_value;
+		details::LCM_Calculator calc{return_value};
+		
+		for(auto v : i_list) {
+			calc.add(v);
+		}
+		calc.compute();
+		
+		return return_value;
+	}
+	
+	template<class IterB, class IterE>
+	requires requires(IterB it) {
+		requires std::integral<std::remove_cvref_t<decltype(*it)>>;
+	}
+	auto lcm(IterB it, IterE it_end) noexcept {
+		typename std::remove_cvref<decltype( *it )>::type return_value;
+		details::LCM_Calculator calc{return_value};
 		
 		for(; it != it_end; ++it) {
 			calc.add(*it);

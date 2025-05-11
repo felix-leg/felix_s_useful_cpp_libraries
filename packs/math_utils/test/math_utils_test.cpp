@@ -123,3 +123,14 @@ BOOST_AUTO_TEST_CASE( gcd_from_vector ) {
 	auto gcd_r = math::gcd(v.begin(), v.end());
 	BOOST_TEST_REQUIRE( gcd_r == 14 );
 }
+
+BOOST_AUTO_TEST_CASE( lcm_calc_pairs ) {
+	BOOST_TEST_REQUIRE( math::lcm({4,6}) == 12 );
+	BOOST_TEST_REQUIRE( math::lcm({1,1}) == 1 );
+}
+
+BOOST_AUTO_TEST_CASE( lcm_calc ) {
+	BOOST_TEST_REQUIRE( math::lcm({21,6,32}) == 672 );
+	BOOST_TEST_REQUIRE( math::lcm({21,6,32,10}) == 3360 );
+	BOOST_TEST_REQUIRE( math::lcm({2,3,4,5,7}) == 420 );
+}

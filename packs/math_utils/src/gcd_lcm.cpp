@@ -28,10 +28,13 @@ For more information, please refer to <https://unlicense.org>
 #include "gcd_lcm.hpp"
 
 #include <algorithm>
+#include <numeric>
 
 namespace math {
 	
 	namespace details {
+		
+		// ------------------ GCD --------------------------------
 		
 		GCD_Calculator::GCD_Calculator(int8_t& ret_val) noexcept {
 			return_type = I8; return_ptr.i8 = &ret_val;
@@ -56,6 +59,9 @@ namespace math {
 		}
 		GCD_Calculator::GCD_Calculator(uint64_t& ret_val) noexcept {
 			return_type = U64; return_ptr.u64 = &ret_val;
+		}
+		GCD_Calculator::GCD_Calculator(unsigned long long& ret_val) noexcept {
+			return_type = ULL; return_ptr.uLL = &ret_val;
 		}
 		
 		void GCD_Calculator::return_value(unsigned long long val) noexcept {
@@ -83,6 +89,9 @@ namespace math {
 					break;
 				case U64:
 					*(return_ptr.u64) = static_cast<uint64_t>(val);
+					break;
+				case ULL:
+					*(return_ptr.uLL) = val;
 					break;
 			}
 		}
@@ -143,6 +152,11 @@ namespace math {
 			values.push_front(static_cast<unsigned long long>(val));
 			++values_num;
 		}
+		void GCD_Calculator::add(unsigned long long val) noexcept {
+			if( val == 0 ) return;
+			values.push_front(val);
+			++values_num;
+		}
 		
 		void GCD_Calculator::compute() noexcept {
 			if( values.empty() ) {
@@ -181,6 +195,135 @@ namespace math {
 				}
 				values.swap(next_values);
 			}
+		}
+		
+		// ------------------ LCM --------------------------------
+		
+		LCM_Calculator::LCM_Calculator(int8_t& ret_val) noexcept {
+			return_type = I8; return_ptr.i8 = &ret_val;
+		}
+		LCM_Calculator::LCM_Calculator(uint8_t& ret_val) noexcept {
+			return_type = U8; return_ptr.u8 = &ret_val;
+		}
+		LCM_Calculator::LCM_Calculator(int16_t& ret_val) noexcept {
+			return_type = I16; return_ptr.i16 = &ret_val;
+		}
+		LCM_Calculator::LCM_Calculator(uint16_t& ret_val) noexcept {
+			return_type = U16; return_ptr.u16 = &ret_val;
+		}
+		LCM_Calculator::LCM_Calculator(int32_t& ret_val) noexcept {
+			return_type = I32; return_ptr.i32 = &ret_val;
+		}
+		LCM_Calculator::LCM_Calculator(uint32_t& ret_val) noexcept {
+			return_type = U32; return_ptr.u32 = &ret_val;
+		}
+		LCM_Calculator::LCM_Calculator(int64_t& ret_val) noexcept {
+			return_type = I64; return_ptr.i64 = &ret_val;
+		}
+		LCM_Calculator::LCM_Calculator(uint64_t& ret_val) noexcept {
+			return_type = U64; return_ptr.u64 = &ret_val;
+		}
+		
+		void LCM_Calculator::return_value(unsigned long long val) noexcept {
+			switch( return_type ) {
+				case I8:
+					*(return_ptr.i8) = static_cast<int8_t>(val);
+					break;
+				case U8:
+					*(return_ptr.u8) = static_cast<uint8_t>(val);
+					break;
+				case I16:
+					*(return_ptr.i16) = static_cast<int16_t>(val);
+					break;
+				case U16:
+					*(return_ptr.u16) = static_cast<uint16_t>(val);
+					break;
+				case I32:
+					*(return_ptr.i32) = static_cast<int32_t>(val);
+					break;
+				case U32:
+					*(return_ptr.u32) = static_cast<uint32_t>(val);
+					break;
+				case I64:
+					*(return_ptr.i64) = static_cast<int64_t>(val);
+					break;
+				case U64:
+					*(return_ptr.u64) = static_cast<uint64_t>(val);
+					break;
+			}
+		}
+		
+		void LCM_Calculator::add(int8_t val) noexcept {
+			if( val == 0 ) return;
+			if( val < 0 ) {
+				values.push_front(static_cast<unsigned long long>(-val));
+			} else {
+				values.push_front(static_cast<unsigned long long>(val));
+			}
+		}
+		void LCM_Calculator::add(uint8_t val) noexcept {
+			if( val == 0 ) return;
+			values.push_front(static_cast<unsigned long long>(val));
+		}
+		void LCM_Calculator::add(int16_t val) noexcept {
+			if( val == 0 ) return;
+			if( val < 0 ) {
+				values.push_front(static_cast<unsigned long long>(-val));
+			} else {
+				values.push_front(static_cast<unsigned long long>(val));
+			}
+		}
+		void LCM_Calculator::add(uint16_t val) noexcept {
+			if( val == 0 ) return;
+			values.push_front(static_cast<unsigned long long>(val));
+		}
+		void LCM_Calculator::add(int32_t val) noexcept {
+			if( val == 0 ) return;
+			if( val < 0 ) {
+				values.push_front(static_cast<unsigned long long>(-val));
+			} else {
+				values.push_front(static_cast<unsigned long long>(val));
+			}
+		}
+		void LCM_Calculator::add(uint32_t val) noexcept {
+			if( val == 0 ) return;
+			values.push_front(static_cast<unsigned long long>(val));
+		}
+		void LCM_Calculator::add(int64_t val) noexcept {
+			if( val == 0 ) return;
+			if( val < 0 ) {
+				values.push_front(static_cast<unsigned long long>(-val));
+			} else {
+				values.push_front(static_cast<unsigned long long>(val));
+			}
+		}
+		void LCM_Calculator::add(uint64_t val) noexcept {
+			if( val == 0 ) return;
+			values.push_front(static_cast<unsigned long long>(val));
+		}
+		
+		void LCM_Calculator::compute() noexcept {
+			if( values.empty() ) {
+				return_value(0);
+				return;
+			}
+			
+			auto multiplier = gcd(values.begin(), values.end());
+			for(auto& v : values) {
+				v /= multiplier;
+			}
+			
+			while( values.size() > 1 ) {
+				auto a = values.front(); values.pop_front();
+				auto b = values.front(); values.pop_front();
+				
+				auto common = std::gcd(a,b);
+				multiplier *= common;
+				
+				values.push_front( (a/common) * (b/common) );
+			}
+			
+			return_value(values.front() * multiplier);
 		}
 		
 	};
