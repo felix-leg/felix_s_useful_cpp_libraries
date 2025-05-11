@@ -43,6 +43,7 @@ add_library(tested_lib
 	"src/split.hpp" "src/split.cpp"
 	"src/just.hpp" "src/just.cpp"
 	"src/checks.hpp" "src/checks.cpp"
+	"src/trim.hpp" "src/trim.cpp"
 )
 target_sources(tested_lib PRIVATE FILE_SET "incl" TYPE HEADERS
 	FILES
