@@ -30,6 +30,7 @@ For more information, please refer to <https://unlicense.org>
 #define FELIXS_PACK_MATH_UTILS_RANGES_CALC_HPP
 
 #include <type_traits>
+#include <limits>
 
 namespace math {
 	
@@ -69,7 +70,15 @@ namespace math {
 		}
 		if constexpr (std::is_floating_point_v<FactorType>) {
 			if( details::is_inf(t) ) {
-				return t;
+				if constexpr (std::is_floating_point_v<ValueType>) {
+					return t;
+				} else {
+					if( t > FactorType(0) ) {
+						return std::numeric_limits<ValueType>::max();
+					} else {
+						return std::numeric_limits<ValueType>::min();
+					}
+				}
 			}
 		}
 		

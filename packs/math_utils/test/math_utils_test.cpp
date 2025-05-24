@@ -77,6 +77,8 @@ BOOST_AUTO_TEST_CASE( lerp_test ) {
 	BOOST_TEST_REQUIRE( (a == math::lerp(b,a, 1.0f)) );
 	
 	BOOST_TEST_REQUIRE( math::lerp(a,b,INFINITY) == INFINITY );
+	BOOST_TEST_REQUIRE( math::lerp<signed char>(0,1,INFINITY) == 127 );
+	BOOST_TEST_REQUIRE( math::lerp<signed char>(0,1,-INFINITY) == -128 );
 }
 
 BOOST_AUTO_TEST_CASE( map_range_test ) {
