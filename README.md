@@ -6,6 +6,7 @@ They are:
 * [**files**](packs/files/README.md): File paths,
 * [**macros**](packs/macros/README.md): Some macros that depends of the used compiler,
 * [**math_utils**](packs/math_utils/README.md): Math objects,
+* [**geometry**](packs/geometry/README.md): 2D and 3D geometry objects,
 * [**primitives**](packs/primitives/README.md): Operations on basic C++ types,
 * [**system**](packs/system/README.md): Things you can ask OS to do,
 * [**text**](packs/text/README.md): Text modifications and queries.
