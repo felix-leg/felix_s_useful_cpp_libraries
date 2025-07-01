@@ -35,6 +35,7 @@ For more information, please refer to <https://unlicense.org>
 #include "../src/angle.hpp"
 #include "../src/ranges_calc.hpp"
 #include "../src/gcd_lcm.hpp"
+#include "../src/mod.hpp"
 
 BOOST_AUTO_TEST_CASE( angle_compare ) {
 	auto a1 = math::degrees(180.0f);
@@ -135,4 +136,36 @@ BOOST_AUTO_TEST_CASE( lcm_calc ) {
 	BOOST_TEST_REQUIRE( math::lcm({21,6,32}) == 672 );
 	BOOST_TEST_REQUIRE( math::lcm({21,6,32,10}) == 3360 );
 	BOOST_TEST_REQUIRE( math::lcm({2,3,4,5,7}) == 420 );
+}
+
+BOOST_AUTO_TEST_CASE( different_mod_calc ) {
+	BOOST_TEST_REQUIRE( math::trunc_mod(8, 5) == 3 );
+	BOOST_TEST_REQUIRE( math::trunc_mod(-8, 5) == -3 );
+	BOOST_TEST_REQUIRE( math::trunc_mod(8, -5) == 3 );
+	BOOST_TEST_REQUIRE( math::trunc_mod(-8, -5) == -3 );
+	
+	BOOST_TEST_REQUIRE( math::floor_mod(8, 5) == 3 );
+	BOOST_TEST_REQUIRE( math::floor_mod(-8, 5) == 2 );
+	BOOST_TEST_REQUIRE( math::floor_mod(8, -5) == -2 );
+	BOOST_TEST_REQUIRE( math::floor_mod(-8, -5) == -3 );
+	
+	BOOST_TEST_REQUIRE( math::round_mod(8, 5) == -2 );
+	BOOST_TEST_REQUIRE( math::round_mod(-8, 5) == 2 );
+	BOOST_TEST_REQUIRE( math::round_mod(8, -5) == -2 );
+	BOOST_TEST_REQUIRE( math::round_mod(-8, -5) == 2 );
+	
+	BOOST_TEST_REQUIRE( math::euclid_mod(8, 5) == 3 );
+	BOOST_TEST_REQUIRE( math::euclid_mod(-8, 5) == 2 );
+	BOOST_TEST_REQUIRE( math::euclid_mod(8, -5) == 3 );
+	BOOST_TEST_REQUIRE( math::euclid_mod(-8, -5) == 2 );
+	
+	BOOST_TEST_REQUIRE( math::E_mod(8, 5) == 3 );
+	BOOST_TEST_REQUIRE( math::E_mod(-8, 5) == 2 );
+	BOOST_TEST_REQUIRE( math::E_mod(8, -5) == 3 );
+	BOOST_TEST_REQUIRE( math::E_mod(-8, -5) == 2 );
+	
+	BOOST_TEST_REQUIRE( math::F_mod(8, 5) == 3 );
+	BOOST_TEST_REQUIRE( math::F_mod(-8, 5) == 2 );
+	BOOST_TEST_REQUIRE( math::F_mod(8, -5) == -2 );
+	BOOST_TEST_REQUIRE( math::F_mod(-8, -5) == -3 );
 }
