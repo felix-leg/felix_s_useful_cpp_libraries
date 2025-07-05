@@ -29,13 +29,18 @@ For more information, please refer to <https://unlicense.org>
 
 #include <utility>
 #ifdef APP_SYSTEM_IS_MSWIN
-	#include <io.h>
 	#define WIN32_LEAN_AND_MEAN
 	#define NOMINMAX
+	#include <io.h>
 	#include <windows.h>
+	#include <winbase.h>
+	#include <fileapi.h>
 #else
 	#ifdef APP_SYSTEM_IS_LINUX
 		#include <linux/limits.h>
+		#include <sys/ioctl.h>
+		#include <linux/fs.h>
+		#include <fcntl.h>
 	#endif
 	#include <unistd.h>
 #endif
@@ -144,7 +149,10 @@ namespace files {
 				mode = 2;
 				break;
 			case EXECUTABLE:
-				return true; //impossible to check on MS Windows
+				{
+					[[maybe_unused]] DWORD dummy;
+					return GetBinaryTypeW(native(), &dummy) != 0;
+				}
 			default:
 				std::unreachable();
 		}
@@ -189,6 +197,95 @@ namespace files {
 				return std::filesystem::is_symlink(path_obj);
 		}
 		std::unreachable();
+	}
+	
+	AttributeState Path::get_special_attr(SpecialAttribute attr) const noexcept {
+		if( !exists() ) {
+			return AttributeState::FILE_DOES_NOT_EXIST;
+		}
+		AttributeState result = AttributeState::NOT_IMPLEMENTED;
+		#define SET_FLAG(cond) result = (cond) ? AttributeState::SET : AttributeState::UNSET
+		#define HAS(flag, bits) (((flag) & bits) == bits)
+		
+		#ifdef APP_SYSTEM_IS_MSWIN
+		DWORD flags = GetFileAttributesW(native());
+		switch(attr) {
+			case SpecialAttribute::ARCHIVE:
+				SET_FLAG(HAS(flags, FILE_ATTRIBUTE_ARCHIVE));
+				break;
+			case SpecialAttribute::HIDDEN:
+				SET_FLAG(HAS(flags, FILE_ATTRIBUTE_HIDDEN));
+				break;
+			case SpecialAttribute::SYSTEM:
+				SET_FLAG(HAS(flags, FILE_ATTRIBUTE_SYSTEM));
+				break;
+			case SpecialAttribute::READ_ONLY:
+				SET_FLAG(HAS(flags, FILE_ATTRIBUTE_READONLY));
+				break;
+			case SpecialAttribute::COMPRESSED:
+				SET_FLAG(HAS(flags, FILE_ATTRIBUTE_COMPRESSED));
+				break;
+			case SpecialAttribute::ENCRYPTED:
+				SET_FLAG(HAS(flags, FILE_ATTRIBUTE_ENCRYPTED));
+				break;
+			case SpecialAttribute::NOT_INDEXED:
+				SET_FLAG(HAS(flags, FILE_ATTRIBUTE_NOT_CONTENT_INDEXED));
+				break;
+			case SpecialAttribute::OFFLINE:
+				SET_FLAG(HAS(flags, FILE_ATTRIBUTE_OFFLINE));
+				break;
+			case SpecialAttribute::SPARSE:
+				SET_FLAG(HAS(flags, FILE_ATTRIBUTE_SPARSE_FILE));
+				break;
+			case SpecialAttribute::TEMPORARY:
+				SET_FLAG(HAS(flags, FILE_ATTRIBUTE_TEMPORARY));
+				break;
+			default:
+				break;
+		}
+		#endif
+		
+		#ifdef APP_SYSTEM_IS_LINUX
+		struct fsxattr file_attrs;
+		int fd, ret;
+		
+		fd = open(native(), 0);
+		if( fd == -1 ) {
+			return result;
+		}
+		ret = ioctl(fd, FS_IOC_FSGETXATTR, &file_attrs);
+		close(fd);
+		if( ret == -1 ) {
+			return result;
+		}
+		
+		switch(attr) {
+			case SpecialAttribute::IMMUTABLE:
+				SET_FLAG(HAS(file_attrs.fsx_xflags, FS_XFLAG_IMMUTABLE));
+				break;
+			case SpecialAttribute::APPEND_ONLY:
+				SET_FLAG(HAS(file_attrs.fsx_xflags, FS_XFLAG_APPEND));
+				break;
+			case SpecialAttribute::SYNC_WRITE:
+				SET_FLAG(HAS(file_attrs.fsx_xflags, FS_XFLAG_SYNC));
+				break;
+			case SpecialAttribute::NO_UPDATE_ACCESS_TIME:
+				SET_FLAG(HAS(file_attrs.fsx_xflags, FS_XFLAG_NOATIME));
+				break;
+			case SpecialAttribute::NO_DUMP:
+				SET_FLAG(HAS(file_attrs.fsx_xflags, FS_XFLAG_NODUMP));
+				break;
+			case SpecialAttribute::NO_SYMLINKS:
+				SET_FLAG(HAS(file_attrs.fsx_xflags, FS_XFLAG_NOSYMLINKS));
+				break;
+			default:
+				break;
+		}
+		#endif
+		
+		#undef SET_FLAG
+		#undef HAS
+		return result;
 	}
 	
 	bool is_valid_name(const std::filesystem::path& elem) {

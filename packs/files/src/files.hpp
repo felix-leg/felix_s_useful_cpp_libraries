@@ -58,6 +58,32 @@ namespace files {
 		A_LINK
 	};
 	
+	enum class AttributeState : unsigned char {
+		SET,
+		UNSET,
+		NOT_IMPLEMENTED,
+		FILE_DOES_NOT_EXIST
+	};
+	
+	enum class SpecialAttribute {
+		ARCHIVE, //mswin
+		HIDDEN, //mswin
+		SYSTEM, //mswin
+		READ_ONLY, //mswin
+		COMPRESSED, //mswin
+		ENCRYPTED, //mswin
+		NOT_INDEXED, //mswin
+		OFFLINE, //mswin
+		SPARSE, //mswin
+		TEMPORARY, //mswin
+		IMMUTABLE, //linux
+		APPEND_ONLY, //linux
+		SYNC_WRITE, //linux
+		NO_UPDATE_ACCESS_TIME, //linux
+		NO_DUMP, //linux
+		NO_SYMLINKS //linux
+	};
+	
 	class Path {
 	private:
 		std::filesystem::path path_obj;
@@ -92,6 +118,7 @@ namespace files {
 		[[nodiscard]] bool exists() const noexcept;
 		[[nodiscard]] bool is(Perms perm) const noexcept;
 		[[nodiscard]] bool is(FileType f_type) const noexcept;
+		[[nodiscard]] AttributeState get_special_attr(SpecialAttribute attr) const noexcept;
 		/// checks if path contains only valid characters
 		[[nodiscard]] bool is_valid() const noexcept;
 		

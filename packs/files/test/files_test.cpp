@@ -43,9 +43,7 @@ BOOST_AUTO_TEST_CASE( file_access ) {
 	
 	BOOST_TEST_REQUIRE( this_file.is(files::READABLE) );
 	BOOST_TEST_REQUIRE( this_file.is(files::WRITEABLE) );
-	if constexpr (files::IS_POSIX) {
-		BOOST_TEST_REQUIRE( ! this_file.is(files::EXECUTABLE) );
-	}
+	BOOST_TEST_REQUIRE( ! this_file.is(files::EXECUTABLE) );
 }
 
 BOOST_AUTO_TEST_CASE( file_type ) {
