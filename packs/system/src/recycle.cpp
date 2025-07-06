@@ -139,7 +139,7 @@ bool move_to_bin(const std::filesystem::path& file_path) noexcept {
 	id file_url = reinterpret_cast<id (*)(id,SEL,CFStringRef)>(objc_msgSend)\
 		(nsUrl,ns_url_make_sel,file_path_cstr);
 	
-	bool op_result = reinterpret_cast<bool (*)(id,SEL,id,id,id)>\
+	bool op_result = reinterpret_cast<bool (*)(id,SEL,id,id,id)>(objc_msgSend)\
 		(file_manager, fm_trash_url_sel, file_url, Nil, Nil);
 	
 	CFRelease(file_url);
