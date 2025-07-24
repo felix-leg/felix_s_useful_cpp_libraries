@@ -40,6 +40,7 @@ include("../system_detect.cmake")
 add_library(tested_lib
 	"src/geometry.hpp" "src/geometry.cpp"
 	"src/transform.hpp" "src/transform.cpp"
+	"src/elements.hpp" "src/elements.cpp"
 )
 target_include_directories(tested_lib PRIVATE "${CMAKE_SOURCE_DIR}/src")
 set_target_env_options(tested_lib)
@@ -48,10 +49,14 @@ set_target_env_options(tested_lib)
 add_executable(the_test "test/geometry_test.cpp")
 target_link_libraries(the_test PRIVATE tested_lib Boost::unit_test_framework)
 set_target_env_options(the_test)
-#the sub-test
+#the transform-test
 add_executable(the_test2 "test/transform_test.cpp")
 target_link_libraries(the_test2 PRIVATE tested_lib Boost::unit_test_framework)
 set_target_env_options(the_test2)
+#the sub-test
+add_executable(the_test3 "test/other_test.cpp")
+target_link_libraries(the_test3 PRIVATE tested_lib Boost::unit_test_framework)
+set_target_env_options(the_test3)
 
 add_test(NAME "main_test" COMMAND "the_test")
 add_test(NAME "build_test"
@@ -61,6 +66,7 @@ add_test(NAME "build_test"
 		--target "the_test"
 )
 set_tests_properties("main_test" PROPERTIES DEPENDS "build_test" )
+#
 add_test(NAME "sub_test" COMMAND "the_test2")
 add_test(NAME "build_test2"
 	COMMAND
@@ -69,3 +75,12 @@ add_test(NAME "build_test2"
 		--target "the_test2"
 )
 set_tests_properties("sub_test" PROPERTIES DEPENDS "build_test2" )
+#
+add_test(NAME "sub_test2" COMMAND "the_test3")
+add_test(NAME "build_test3"
+	COMMAND
+		"${CMAKE_COMMAND}"
+		--build "${CMAKE_BINARY_DIR}"
+		--target "the_test3"
+)
+set_tests_properties("sub_test2" PROPERTIES DEPENDS "build_test3" )

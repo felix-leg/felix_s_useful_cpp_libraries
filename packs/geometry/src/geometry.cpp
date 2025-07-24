@@ -197,6 +197,7 @@ bvec3::bvec3(bool _x, bool _y, bool _z) noexcept : x{_x}, y{_y}, z{_z} {}
 
 vec3::vec3() noexcept : x{0.0f}, y{0.0f}, z{0.0f} {}
 vec3::vec3(float _x, float _y, float _z) noexcept : x{_x}, y{_y}, z{_z} {}
+vec3::vec3(const vec2& v2, float _z) noexcept : x{v2.x}, y{v2.y}, z{_z} {}
 
 bool bvec3::all() const noexcept {
 	return (x && y) && (y && z);

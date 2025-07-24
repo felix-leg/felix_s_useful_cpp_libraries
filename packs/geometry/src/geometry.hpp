@@ -203,6 +203,7 @@ namespace vec {
 		explicit(false) vec3(float _x, float _y, float _z) noexcept;
 		vec3(const vec3& other) = default;
 		vec3(vec3&& other) = default;
+		vec3(const vec2& v2, float _z) noexcept;
 		
 		vec3& operator=(const vec3& other) = default;
 		vec3& operator=(vec3&& other) = default;
