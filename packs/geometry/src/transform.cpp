@@ -245,5 +245,40 @@ namespace transform {
 	
 	#undef EXPAND_TO_M4
 	
+	std::optional<vec::vec2> normal_transform(const vec::vec2& n, const mat::mat3& m) noexcept {
+		mat::mat2 reduced{
+			m.m00, m.m01,
+			m.m10, m.m11
+		};
+		float det_m = reduced.det();
+		if( det_m == 0.0f ) {
+			return std::nullopt;
+		}
+		auto inv_m = reduced.inv();
+		if( ! inv_m.has_value() ) {
+			return std::nullopt;
+		}
+		float sign = (det_m > 0.0f) ? 1.0f : -1.0f;
+		return n * (sign * inv_m.value());
+	}
+	
+	std::optional<vec::vec3> normal_transform(const vec::vec3& n, const mat::mat4& m) noexcept {
+		mat::mat3 reduced{
+			m.m00, m.m01, m.m02,
+			m.m10, m.m11, m.m12,
+			m.m20, m.m21, m.m22
+		};
+		float det_m = reduced.det();
+		if( det_m == 0.0f ) {
+			return std::nullopt;
+		}
+		auto inv_m = reduced.inv();
+		if( ! inv_m.has_value() ) {
+			return std::nullopt;
+		}
+		float sign = (det_m > 0.0f) ? 1.0f : -1.0f;
+		return n * (sign * inv_m.value());
+	}
+	
 } //! namespace transform
 

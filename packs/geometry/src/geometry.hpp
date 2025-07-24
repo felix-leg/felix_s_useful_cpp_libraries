@@ -442,7 +442,8 @@ namespace mat {
 		mat2& operator*=(float scalar) noexcept;
 		mat2& operator*=(const mat2& other) noexcept;
 		[[nodiscard]] mat2 operator-() noexcept;
-		::vec::vec2 operator*(const ::vec::vec2& v) const noexcept;
+		[[nodiscard]] ::vec::vec2 operator*(const ::vec::vec2& v) const noexcept;
+		friend ::vec::vec2 operator*(const ::vec::vec2& v, const mat2& m) noexcept;
 		
 		[[nodiscard]] ::vec::vec2 column(unsigned char c) const;
 		[[nodiscard]] ::vec::vec2 row(unsigned char r) const;
@@ -462,6 +463,7 @@ namespace mat {
 	[[nodiscard]] mat2 operator*(float scalar, const mat2& m) noexcept;
 	[[nodiscard]] mat2 operator*(const mat2& m, float scalar) noexcept;
 	[[nodiscard]] mat2 operator*(const mat2& a, const mat2& b) noexcept;
+	[[nodiscard]] ::vec::vec2 operator*(const ::vec::vec2& v, const mat2& m) noexcept;
 	
 	[[nodiscard]] bool operator==(const mat2& a, const mat2& b) noexcept;
 	[[nodiscard]] bool operator!=(const mat2& a, const mat2& b) noexcept;
@@ -513,7 +515,8 @@ namespace mat {
 		mat3& operator*=(float scalar) noexcept;
 		mat3& operator*=(const mat3& other) noexcept;
 		[[nodiscard]] mat3 operator-() noexcept;
-		::vec::vec3 operator*(const ::vec::vec3& v) const noexcept;
+		[[nodiscard]] ::vec::vec3 operator*(const ::vec::vec3& v) const noexcept;
+		friend ::vec::vec3 operator*(const ::vec::vec3& v, const mat3& m) noexcept;
 		
 		[[nodiscard]] ::vec::vec3 column(unsigned char c) const;
 		[[nodiscard]] ::vec::vec3 row(unsigned char r) const;
@@ -527,12 +530,13 @@ namespace mat {
 		
 		[[nodiscard]] float det() const noexcept;
 		[[nodiscard]] std::optional<mat3> inv() const noexcept;
-	};//! struct mat2
+	};//! struct mat3
 	[[nodiscard]] mat3 operator+(const mat3& a, const mat3& b) noexcept;
 	[[nodiscard]] mat3 operator-(const mat3& a, const mat3& b) noexcept;
 	[[nodiscard]] mat3 operator*(float scalar, const mat3& m) noexcept;
 	[[nodiscard]] mat3 operator*(const mat3& m, float scalar) noexcept;
 	[[nodiscard]] mat3 operator*(const mat3& a, const mat3& b) noexcept;
+	[[nodiscard]] ::vec::vec3 operator*(const ::vec::vec3& v, const mat3& m) noexcept;
 	
 	[[nodiscard]] bool operator==(const mat3& a, const mat3& b) noexcept;
 	[[nodiscard]] bool operator!=(const mat3& a, const mat3& b) noexcept;
@@ -594,7 +598,8 @@ namespace mat {
 		mat4& operator*=(float scalar) noexcept;
 		mat4& operator*=(const mat4& other) noexcept;
 		[[nodiscard]] mat4 operator-() noexcept;
-		::vec::vec4 operator*(const ::vec::vec4& v) const noexcept;
+		[[nodiscard]] ::vec::vec4 operator*(const ::vec::vec4& v) const noexcept;
+		friend ::vec::vec4 operator*(const ::vec::vec4& v, const mat4& m) noexcept;
 		
 		[[nodiscard]] ::vec::vec4 column(unsigned char c) const;
 		[[nodiscard]] ::vec::vec4 row(unsigned char r) const;
@@ -608,12 +613,13 @@ namespace mat {
 		
 		[[nodiscard]] float det() const noexcept;
 		[[nodiscard]] std::optional<mat4> inv() const noexcept;
-	};//! struct mat2
+	};//! struct mat4
 	[[nodiscard]] mat4 operator+(const mat4& a, const mat4& b) noexcept;
 	[[nodiscard]] mat4 operator-(const mat4& a, const mat4& b) noexcept;
 	[[nodiscard]] mat4 operator*(float scalar, const mat4& m) noexcept;
 	[[nodiscard]] mat4 operator*(const mat4& m, float scalar) noexcept;
 	[[nodiscard]] mat4 operator*(const mat4& a, const mat4& b) noexcept;
+	[[nodiscard]] ::vec::vec4 operator*(const ::vec::vec4& v, const mat4& m) noexcept;
 	
 	[[nodiscard]] bool operator==(const mat4& a, const mat4& b) noexcept;
 	[[nodiscard]] bool operator!=(const mat4& a, const mat4& b) noexcept;

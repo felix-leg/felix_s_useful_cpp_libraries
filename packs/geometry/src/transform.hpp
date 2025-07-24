@@ -31,6 +31,8 @@ For more information, please refer to <https://unlicense.org>
 #define FELIXS_PACK_GEOMETRY_TRANSFORM
 #include "geometry.hpp"
 
+#include <optional>
+
 namespace transform {
 	
 	/// 2x2 matrix for 2D rotation around the origin
@@ -92,6 +94,11 @@ namespace transform {
 	
 	/// 4x4 matrix of a skew along `in_dir` vector by `theta` with `perp` vector as side vector
 	[[nodiscard]] mat::mat4 skew_m4(float theta, const vec::vec3& in_dir, const vec::vec3& perp) noexcept;
+	
+	/// transforming a normal vector `n` by a 3x3 transform matrix `m`
+	[[nodiscard]] std::optional<vec::vec2> normal_transform(const vec::vec2& n, const mat::mat3& m) noexcept;
+	/// transforming a normal vector `n` by a 4x4 transform matrix `m`
+	[[nodiscard]] std::optional<vec::vec3> normal_transform(const vec::vec3& n, const mat::mat4& m) noexcept;
 	
 } //! namespace transform
 

@@ -745,8 +745,39 @@ mat2 operator*(const mat2& a, const mat2& b) noexcept {
 ::vec::vec2 mat2::operator*(const ::vec::vec2& v) const noexcept {
 	::vec::vec2 out;
 	
+	#ifdef HAS_SIMD
+	typedef simd::fixed_size_simd<float, 2> Sv;
+	
+	Sv sv{v.data, simd::unaligned};
+	Sv col1; SIMD_INIT2(col1, m00, m01);
+	Sv col2; SIMD_INIT2(col2, m10, m11);
+	
+	out.x = simd::reduce(sv * col1);
+	out.y = simd::reduce(sv * col2);
+	#else
 	out.x = m00 * v.x + m01 * v.y;
 	out.y = m10 * v.x + m11 * v.y;
+	#endif
+	
+	return out;
+}
+
+::vec::vec2 operator*(const ::vec::vec2& v, const mat2& m) noexcept {
+	::vec::vec2 out;
+	
+	#ifdef HAS_SIMD
+	typedef simd::fixed_size_simd<float, 2> Sv;
+	
+	Sv sv{v.data, simd::unaligned};
+	Sv col1; SIMD_INIT2(col1, m.m00, m.m10);
+	Sv col2; SIMD_INIT2(col2, m.m01, m.m11);
+	
+	out.x = simd::reduce(sv * col1);
+	out.y = simd::reduce(sv * col2);
+	#else
+	out.x = m.m00 * v.x + m.m10 * v.y;
+	out.y = m.m01 * v.x + m.m11 * v.y;
+	#endif
 	
 	return out;
 }
@@ -1011,6 +1042,29 @@ mat3 operator*(const mat3& a, const mat3& b) noexcept {
 	out.x = m00 * v.x + m01 * v.y + m02 * v.z;
 	out.y = m10 * v.x + m11 * v.y + m12 * v.z;
 	out.z = m20 * v.x + m21 * v.y + m22 * v.z;
+	#endif
+	
+	return out;
+}
+
+::vec::vec3 operator*(const ::vec::vec3& v, const mat3& m) noexcept {
+	::vec::vec3 out;
+	
+	#ifdef HAS_SIMD
+	typedef simd::fixed_size_simd<float, 3> Sv;
+	
+	Sv sv{v.data, simd::unaligned};
+	Sv col1; SIMD_INIT3(col1, m.m00, m.m10, m.m20);
+	Sv col2; SIMD_INIT3(col2, m.m01, m.m11, m.m21);
+	Sv col3; SIMD_INIT3(col3, m.m02, m.m12, m.m22);
+	
+	out.x = simd::reduce(sv * col1);
+	out.y = simd::reduce(sv * col2);
+	out.z = simd::reduce(sv * col3);
+	#else
+	out.x = m.m00 * v.x + m.m10 * v.y + m.m20 * v.z;
+	out.y = m.m01 * v.x + m.m11 * v.y + m.m21 * v.z;
+	out.z = m.m02 * v.x + m.m12 * v.y + m.m22 * v.z;
 	#endif
 	
 	return out;
@@ -1322,6 +1376,32 @@ mat4 operator*(const mat4& a, const mat4& b) noexcept {
 	out.y = m10 * v.x + m11 * v.y + m12 * v.z + m13 * v.w;
 	out.z = m20 * v.x + m21 * v.y + m22 * v.z + m23 * v.w;
 	out.w = m30 * v.x + m31 * v.y + m32 * v.z + m33 * v.w;
+	#endif
+	
+	return out;
+}
+
+::vec::vec4 operator*(const ::vec::vec4& v, const mat4& m) noexcept {
+	::vec::vec4 out;
+	
+	#ifdef HAS_SIMD
+	typedef simd::fixed_size_simd<float, 4> Sv;
+	
+	Sv sv{v.data, simd::unaligned};
+	Sv col1; SIMD_INIT4(col1, m.m00, m.m10, m.m20, m.m30);
+	Sv col2; SIMD_INIT4(col2, m.m01, m.m11, m.m21, m.m31);
+	Sv col3; SIMD_INIT4(col3, m.m02, m.m12, m.m22, m.m32);
+	Sv col4; SIMD_INIT4(col4, m.m03, m.m13, m.m23, m.m33);
+	
+	out.x = simd::reduce(sv * col1);
+	out.y = simd::reduce(sv * col2);
+	out.z = simd::reduce(sv * col3);
+	out.w = simd::reduce(sv * col4);
+	#else
+	out.x = m.m00 * v.x + m.m10 * v.y + m.m20 * v.z + m.m30 * v.w;
+	out.y = m.m01 * v.x + m.m11 * v.y + m.m21 * v.z + m.m31 * v.w;
+	out.z = m.m02 * v.x + m.m12 * v.y + m.m22 * v.z + m.m32 * v.w;
+	out.w = m.m03 * v.x + m.m13 * v.y + m.m23 * v.z + m.m33 * v.w;
 	#endif
 	
 	return out;

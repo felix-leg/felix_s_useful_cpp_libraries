@@ -121,4 +121,15 @@ BOOST_AUTO_TEST_CASE( scaling ) {
 	BOOST_TEST_REQUIRE( (tr == tr_c) );
 }
 
+BOOST_AUTO_TEST_CASE( normal_transform ) {
+	vec::vec3 n{1.0f, 1.0f, 0.0f};
+	n.normalize();
+	mat::mat4 M = transform::scale_m4(2.0f, 1.0f, 1.0f);
+	
+	auto calculated = transform::normal_transform(n, M).value();
+	auto correct = n; correct.x /= 2.0f;
+	
+	BOOST_TEST_REQUIRE( (calculated == correct) );
+}
+
 
