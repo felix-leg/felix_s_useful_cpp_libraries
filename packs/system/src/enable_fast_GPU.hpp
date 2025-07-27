@@ -25,33 +25,24 @@ OTHER DEALINGS IN THE SOFTWARE.
 For more information, please refer to <https://unlicense.org>
 
 */
-#define BOOST_TEST_DYN_LINK
-#define BOOST_TEST_MODULE system_test
-#include <boost/test/unit_test.hpp>
+#pragma once
+#ifndef FELIXS_PACK_SYSTEM_ENABLE_FAST_GPU_HPP
+#define FELIXS_PACK_SYSTEM_ENABLE_FAST_GPU_HPP
 
-#include "../src/memory.hpp"
-#include "../src/recycle.hpp"
-#include "../src/info.hpp"
-#include <fstream>
-#include <filesystem>
+/**
+  * On MS Windows enables the application to use
+  * faster GPU in case the laptop has got a dedicated core
+  */
 
-BOOST_AUTO_TEST_CASE( total_and_free_memory ) {
-	std::cout << "You have got " << memory::as_MB(memory::get_free_RAM()) << " MB of free memory" << std::endl;
-	std::cout << "You have got " << memory::as_MB(memory::get_total_RAM()) << " MB of total memory" << std::endl;
-}
+#ifdef APP_SYSTEM_IS_MSWIN
+	#define WIN32_LEAN_AND_MEAN
+	#define NOMINMAX
+	#include <windows.h>
+// nVidia
+__declspec(dllexport) DWORD NvOptimusEnablement = 0x00000001;
+// AMD
+__declspec(dllexport) DWORD AmdPowerXpressRequestHighPerformance = 0x00000001;
+#endif
 
-BOOST_AUTO_TEST_CASE( num_of_cores ) {
-	std::cout << "You have got " << get_num_of_CPU_cores() << " CPU core(s)" << std::endl;
-}
 
-BOOST_AUTO_TEST_CASE( trash_file ) {
-	std::filesystem::path to_trash{__FILE__};
-	to_trash = to_trash.parent_path();
-	to_trash /= "pack_system_to_trash.txt";
-	{
-		std::ofstream f{to_trash};
-		f << "CONTENT TO TRASH";
-	}
-	BOOST_TEST_REQUIRE( move_to_bin(to_trash) );
-}
-
+#endif //! FELIXS_PACK_SYSTEM_ENABLE_FAST_GPU_HPP

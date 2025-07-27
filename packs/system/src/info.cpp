@@ -25,33 +25,52 @@ OTHER DEALINGS IN THE SOFTWARE.
 For more information, please refer to <https://unlicense.org>
 
 */
-#define BOOST_TEST_DYN_LINK
-#define BOOST_TEST_MODULE system_test
-#include <boost/test/unit_test.hpp>
+#include "info.hpp"
 
-#include "../src/memory.hpp"
-#include "../src/recycle.hpp"
-#include "../src/info.hpp"
-#include <fstream>
-#include <filesystem>
+#ifdef APP_SYSTEM_IS_MACOS
+	#include <sys/param.h>
+	#include <sys/sysctl.h>
+#endif
 
-BOOST_AUTO_TEST_CASE( total_and_free_memory ) {
-	std::cout << "You have got " << memory::as_MB(memory::get_free_RAM()) << " MB of free memory" << std::endl;
-	std::cout << "You have got " << memory::as_MB(memory::get_total_RAM()) << " MB of total memory" << std::endl;
+#ifdef APP_SYSTEM_IS_LINUX
+	#include <unistd.h>
+#endif
+
+#ifdef APP_SYSTEM_IS_MSWIN
+	#define WIN32_LEAN_AND_MEAN
+	#define NOMINMAX
+	#include <windows.h>
+#endif
+
+uint32_t get_num_of_CPU_cores() noexcept {
+	#ifdef APP_SYSTEM_IS_MSWIN
+		SYSTEM_INFO sysinfo;
+		GetSystemInfo(&sysinfo);
+		return static_cast<uint32_t>(sysinfo.dwNumberOfProcessors);
+	#endif
+	#ifdef APP_SYSTEM_IS_LINUX
+		//WARNING: can return -1
+		int count = sysconf(_SC_NPROCESSORS_ONLN);
+		return count > 0 ? static_cast<uint32_t>(count) : 1;
+	#endif
+	#ifdef APP_SYSTEM_IS_MACOS
+		//XXX un-tested
+		int nm[2];
+		u_int count;
+		size_t len = sizeof(count);
+
+		nm[0] = CTL_HW;
+		nm[1] = HW_AVAILCPU;
+		sysctl(nm, 2, &count, &len, NULL, 0);
+
+		if (count < 1) {
+			//Try something else
+			nm[1] = HW_NCPU;
+			sysctl(nm, 2, &count, &len, NULL, 0);
+			if (count < 1) {
+				count = 1;
+			}
+		}
+		return static_cast<uint32_t>(count);
+	#endif
 }
-
-BOOST_AUTO_TEST_CASE( num_of_cores ) {
-	std::cout << "You have got " << get_num_of_CPU_cores() << " CPU core(s)" << std::endl;
-}
-
-BOOST_AUTO_TEST_CASE( trash_file ) {
-	std::filesystem::path to_trash{__FILE__};
-	to_trash = to_trash.parent_path();
-	to_trash /= "pack_system_to_trash.txt";
-	{
-		std::ofstream f{to_trash};
-		f << "CONTENT TO TRASH";
-	}
-	BOOST_TEST_REQUIRE( move_to_bin(to_trash) );
-}
-

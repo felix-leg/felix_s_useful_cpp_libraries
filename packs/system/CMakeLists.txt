@@ -40,6 +40,7 @@ include("../system_detect.cmake")
 add_library(tested_lib
 	"src/memory.hpp" "src/memory.cpp"
 	"src/recycle.hpp" "src/recycle.cpp"
+	"src/info.hpp" "src/info.cpp"
 )
 target_include_directories(tested_lib PRIVATE "${CMAKE_SOURCE_DIR}/src")
 target_compile_options(tested_lib PRIVATE "-Wall")
@@ -56,6 +57,10 @@ if(LINUX)
 	target_include_directories(tested_lib PRIVATE ${GIO2_INCLUDE_DIRS} ${GOBJ2_INCLUDE_DIRS})
 	target_compile_options(tested_lib PRIVATE ${GIO2_CFLAGS} ${GOBJ2_CFLAGS})
 endif()
+target_sources(tested_lib PRIVATE FILE_SET "incl" TYPE HEADERS
+	FILES
+	"src/enable_fast_GPU.hpp"
+)
 
 #the test
 add_executable(the_test "test/os_test.cpp")
