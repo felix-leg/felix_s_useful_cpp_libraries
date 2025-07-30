@@ -48,4 +48,12 @@ For more information, please refer to <https://unlicense.org>
 	#define APP_COMPILER_IS_MSVC
 #endif
 
+
+// 32/64 bit
+#if defined(_WIN64) || defined(__x86_64__) || defined(_M_X64) || defined(__64BIT__) || defined(__powerpc64__) || defined(__ppc64__)
+	#define APP_ARCH_IS_64BIT
+#else
+	#define APP_ARCH_IS_32BIT
+#endif
+
 #undef COMPILER_HAS_BEEN_DETECTED
