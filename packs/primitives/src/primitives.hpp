@@ -247,5 +247,50 @@ namespace LongDouble {
 
 #undef THE_SET
 
+#ifdef DEFINE_SIZE_AND_BIT_TYPES
+	#ifdef APP_ARCH_IS_32BIT
+		#define U8_TYPE unsigned char
+		#define U8_NS UByte
+		#define I8_TYPE signed char
+		#define I8_NS SByte
+		#define U16_TYPE unsigned short
+		#define U16_NS UShort
+		#define I16_TYPE signed short
+		#define I16_NS Short
+		#define U32_TYPE unsigned int
+		#define U32_NS UInt
+		#define I32_TYPE signed int
+		#define I32_NS Int
+		#define U64_TYPE unsigned long long
+		#define U64_NS ULongLong
+		#define I64_TYPE signed long long
+		#define I64_NS LongLong
+	#endif
+	#ifdef APP_ARCH_IS_64BIT
+		#define U8_TYPE unsigned char
+		#define U8_NS UByte
+		#define I8_TYPE signed char
+		#define I8_NS SByte
+		#define U16_TYPE unsigned short
+		#define U16_NS UShort
+		#define I16_TYPE signed short
+		#define I16_NS Short
+		#define U32_TYPE unsigned int
+		#define U32_NS UInt
+		#define I32_TYPE signed int
+		#define I32_NS Int
+		#define U64_TYPE unsigned long
+		#define U64_NS ULong
+		#define I64_TYPE signed long
+		#define I64_NS Long
+	#endif
+	
+	#define F32_TYPE float
+	#define F32_NS Float
+	#define F64_TYPE double
+	#define F64_NS Double
+	#define F128_TYPE long double
+	#define F128_NS LongDouble
+#endif
 
 #endif //! FELIXS_PACK_PRIMITIVES
