@@ -41,6 +41,9 @@ constexpr const char* UTF_32_TYPE = (std::endian::native == std::endian::big) ? 
 
 #ifdef APP_SYSTEM_IS_MSWIN
 #	define WIN32_LEAN_AND_MEAN
+#	define WIN32_MEAN_AND_LEAN
+#	define NOMINMAX
+#	define VC_EXTRALEAN
 #	include <windows.h>
 #endif
 

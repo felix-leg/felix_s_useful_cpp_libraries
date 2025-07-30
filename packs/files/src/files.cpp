@@ -30,7 +30,9 @@ For more information, please refer to <https://unlicense.org>
 #include <utility>
 #ifdef APP_SYSTEM_IS_MSWIN
 	#define WIN32_LEAN_AND_MEAN
+	#define WIN32_MEAN_AND_LEAN
 	#define NOMINMAX
+	#define VC_EXTRALEAN
 	#include <io.h>
 	#include <windows.h>
 	#include <winbase.h>
