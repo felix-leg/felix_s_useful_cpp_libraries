@@ -1,5 +1,6 @@
 
 set(HOST_DEF "")
+set(HOST_ARCH "")
 
 if(CMAKE_HOST_APPLE)
 	set(HOST_DEF "APP_SYSTEM_IS_MACOS")
@@ -9,6 +10,12 @@ if(CMAKE_HOST_LINUX)
 endif()
 if(CMAKE_HOST_WIN32)
 	set(HOST_DEF "APP_SYSTEM_IS_MSWIN")
+endif()
+
+if(CMAKE_SIZEOF_VOID_P EQUAL "8")
+	set(HOST_ARCH "APP_ARCH_IS_64BIT")
+else()
+	set(HOST_ARCH "APP_ARCH_IS_32BIT")
 endif()
 
 set(COMPILER_DEF "")
@@ -28,6 +35,6 @@ if(${CMAKE_CXX_COMPILER_ID} STREQUAL "MSVC")
 endif()
 
 function(set_target_env_options Target)
-	target_compile_definitions(${Target} PRIVATE ${HOST_DEF} ${COMPILER_DEF})
+	target_compile_definitions(${Target} PRIVATE ${HOST_DEF} ${COMPILER_DEF} ${HOST_ARCH})
 	target_compile_options(${Target} PRIVATE ${COMPILER_FLAGS})
 endfunction()
