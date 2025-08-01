@@ -50,6 +50,14 @@ namespace math {
 		}
 	}
 	
+	float angle::as_turns() const noexcept {
+		if( is_deg ) {
+			return value / 360.0f;
+		} else {
+			return (value / std::numbers::pi_v<float> * 2.0f);
+		}
+	}
+	
 	angle& angle::operator+=(const angle& other) noexcept {
 		if( is_deg ) {
 			value += other.as_degrees();
@@ -158,6 +166,10 @@ namespace math {
 	
 	angle radians(float value) noexcept {
 		return {value, false};
+	}
+	
+	angle turns(float value) noexcept {
+		return {360.0f * value, true};
 	}
 	
 	angle angle::clamp360() const noexcept {

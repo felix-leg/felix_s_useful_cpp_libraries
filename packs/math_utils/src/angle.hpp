@@ -43,6 +43,7 @@ namespace math {
 		
 		[[nodiscard]] float as_radians() const noexcept;
 		[[nodiscard]] float as_degrees() const noexcept;
+		[[nodiscard]] float as_turns() const noexcept;
 		
 		angle& operator+=(const angle& other) noexcept;
 		angle& operator-=(const angle& other) noexcept;
@@ -63,6 +64,7 @@ namespace math {
 		
 		friend angle degrees(float value) noexcept;
 		friend angle radians(float value) noexcept;
+		friend angle turns(float value) noexcept;
 		
 		/// clamp angle in [0, 360deg]
 		[[nodiscard]] angle clamp360() const noexcept;
@@ -85,6 +87,7 @@ namespace math {
 	
 	[[nodiscard]] angle degrees(float value) noexcept;
 	[[nodiscard]] angle radians(float value) noexcept;
+	[[nodiscard]] angle turns(float value) noexcept;
 	
 	[[nodiscard]] float sin(const angle& a);
 	[[nodiscard]] float cos(const angle& a);
