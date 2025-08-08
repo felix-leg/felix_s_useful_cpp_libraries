@@ -23,7 +23,7 @@
 #
 #For more information, please refer to <https://unlicense.org>
 #
-cmake_minimum_required(VERSION 4.0.0)
+cmake_minimum_required(VERSION 3.5...4.0.0)
 # C++23
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
