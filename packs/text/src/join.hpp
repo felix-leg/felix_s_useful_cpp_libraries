@@ -28,7 +28,6 @@ For more information, please refer to <https://unlicense.org>
 #pragma once
 #ifndef FELIXS_PACK_TEXT_UTILS__JOIN
 #define FELIXS_PACK_TEXT_UTILS__JOIN
-
 #include <string>
 #include <string_view>
 #include <sstream>

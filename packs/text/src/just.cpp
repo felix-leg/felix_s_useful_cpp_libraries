@@ -89,4 +89,4 @@ namespace txt {
 		return l_space + std::string(str.data(), str.size()) + r_space;
 	}
 	
-}
+} // !namespace txt

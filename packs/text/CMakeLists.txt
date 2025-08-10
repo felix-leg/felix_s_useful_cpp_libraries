@@ -38,16 +38,25 @@ include("../system_detect.cmake")
 
 #the library
 add_library(tested_lib
-	"src/case.hpp" "src/case.cpp"
+	"src/utf32/case.hpp" "src/utf32/case.cpp"
+	"src/utf8/case.hpp" "src/utf8/case.cpp"
+	"src/ascii/case.hpp" "src/ascii/case.cpp"
 	"src/convert.hpp" "src/convert.cpp"
 	"src/split.hpp" "src/split.cpp"
 	"src/just.hpp" "src/just.cpp"
-	"src/checks.hpp" "src/checks.cpp"
-	"src/trim.hpp" "src/trim.cpp"
+	"src/utf32/checks.hpp" "src/utf32/checks.cpp"
+	"src/utf8/checks.hpp" "src/utf8/checks.cpp"
+	"src/ascii/checks.hpp" "src/ascii/checks.cpp"
+	"src/utf32/trim.hpp" "src/utf32/trim.cpp"
+	"src/utf8/trim.hpp" "src/utf8/trim.cpp"
+	"src/ascii/trim.hpp" "src/ascii/trim.cpp"
+	"src/db.hpp" "src/db.cpp"
+	"src/utf8/iter.hpp" "src/utf8/iter.cpp"
 )
 target_sources(tested_lib PRIVATE FILE_SET "incl" TYPE HEADERS
 	FILES
 	"src/join.hpp"
+	"src/unicode.hpp"
 )
 target_include_directories(tested_lib PRIVATE "${CMAKE_SOURCE_DIR}/src")
 set_target_env_options(tested_lib)

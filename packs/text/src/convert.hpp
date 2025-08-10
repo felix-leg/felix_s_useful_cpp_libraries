@@ -28,7 +28,6 @@ For more information, please refer to <https://unlicense.org>
 #pragma once
 #ifndef FELIXS_PACK_TEXT_CONVERT
 #define FELIXS_PACK_TEXT_CONVERT
-
 #include <string>
 #include <string_view>
 

@@ -252,7 +252,7 @@ namespace txt {
 				delete[] result;
 				return L"";
 			} else {
-				std::wstring result_str{result, required_size};
+				std::wstring result_str{result, static_cast<uint64_t>(required_size)};
 				delete[] result;
 				return result_str;
 			}
@@ -281,7 +281,7 @@ namespace txt {
 				delete[] result;
 				return "";
 			} else {
-				std::string result_str{result, static_cast<uint64_t>(required_size)};
+				std::string result_str{result, required_size};
 				delete[] result;
 				return result_str;
 			}
