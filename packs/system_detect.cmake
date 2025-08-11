@@ -31,7 +31,7 @@ if(${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang")
 endif()
 if(${CMAKE_CXX_COMPILER_ID} STREQUAL "MSVC")
 	set(COMPILER_DEF "APP_COMPILER_IS_MSVC")
-	set(COMPILER_FLAGS "/Wall")
+	set(COMPILER_FLAGS "/Wall /utf-8")
 endif()
 
 function(set_target_env_options Target)
