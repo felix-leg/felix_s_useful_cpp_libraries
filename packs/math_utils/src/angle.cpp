@@ -27,51 +27,76 @@ For more information, please refer to <https://unlicense.org>
 */
 #include "angle.hpp"
 
-#include <numbers>
 #include <cmath>
+#include <numbers>
+#include <utility>
 
 namespace math {
 	
-	angle::angle(float v, bool d) noexcept : is_deg{d}, value{v} {}
+	angle::angle(float v, Unit u) noexcept : unit{u}, value{v} {}
 	
 	float angle::as_radians() const noexcept {
-		if( is_deg ) {
-			return (value / 180.0f * std::numbers::pi_v<float>);
-		} else {
-			return value;
+		switch( unit ) {
+			case DEG:
+				return (value / 180.0f * std::numbers::pi_v<float>);
+			case RAD:
+				return value;
+			case TURN:
+				return (value / 0.5f * std::numbers::pi_v<float>);
 		}
+		std::unreachable();
 	}
 	
 	float angle::as_degrees() const noexcept {
-		if( is_deg ) {
-			return value;
-		} else {
-			return (value / std::numbers::pi_v<float> * 180.0f);
+		switch( unit ) {
+			case DEG:
+				return value;
+			case RAD:
+				return (value / std::numbers::pi_v<float> * 180.0f);
+			case TURN:
+				return (value * 360.0f);
 		}
+		std::unreachable();
 	}
 	
 	float angle::as_turns() const noexcept {
-		if( is_deg ) {
-			return value / 360.0f;
-		} else {
-			return (value / std::numbers::pi_v<float> * 2.0f);
+		switch( unit ) {
+			case DEG:
+				return value / 360.0f;
+			case RAD:
+				return (value / std::numbers::pi_v<float> * 2.0f);
+			case TURN:
+				return value;
 		}
+		std::unreachable();
 	}
 	
 	angle& angle::operator+=(const angle& other) noexcept {
-		if( is_deg ) {
-			value += other.as_degrees();
-		} else {
-			value += other.as_radians();
+		switch( unit ) {
+			case DEG:
+				value += other.as_degrees();
+				break;
+			case RAD:
+				value += other.as_radians();
+				break;
+			case TURN:
+				value += other.as_turns();
+				break;
 		}
 		return *this;
 	}
 	
 	angle& angle::operator-=(const angle& other) noexcept {
-		if( is_deg ) {
-			value -= other.as_degrees();
-		} else {
-			value -= other.as_radians();
+		switch( unit ) {
+			case DEG:
+				value -= other.as_degrees();
+				break;
+			case RAD:
+				value -= other.as_radians();
+				break;
+			case TURN:
+				value -= other.as_turns();
+				break;
 		}
 		return *this;
 	}
@@ -87,11 +112,15 @@ namespace math {
 	}
 	
 	bool angle::operator==(const angle& other) const noexcept {
-		if( is_deg ) {
-			return value == other.as_degrees();
-		} else {
-			return value == other.as_radians();
+		switch( unit ) {
+			case DEG:
+				return value == other.as_degrees();
+			case RAD:
+				return value == other.as_radians();
+			case TURN:
+				return value == other.as_turns();
 		}
+		std::unreachable();
 	}
 	
 	bool angle::operator!=(const angle& other) const noexcept {
@@ -101,112 +130,154 @@ namespace math {
 	bool angle::equal_within(const angle& other, const angle& tolerance) noexcept {
 		float tol;
 		float diff;
-		if( is_deg ) {
-			diff = value - other.as_degrees();
-			tol = tolerance.as_degrees();
-		} else {
-			diff = value - other.as_radians();
-			tol = tolerance.as_radians();
+		switch( unit ) {
+			case DEG:
+				diff = value - other.as_degrees();
+				tol = tolerance.as_degrees();
+				break;
+			case RAD:
+				diff = value - other.as_radians();
+				tol = tolerance.as_radians();
+				break;
+			case TURN:
+				diff = value - other.as_turns();
+				tol = tolerance.as_turns();
+				break;
 		}
 		return std::fabsf(diff) <= std::fabsf(tol);
 	}
 	
 	angle operator+(const angle& a, const angle& b) noexcept {
-		if( a.is_deg ) {
-			return {a.value + b.as_degrees(), true};
-		} else {
-			return {a.value + b.as_radians(), false};
+		switch( a.unit ) {
+			case angle::DEG:
+				return {a.value + b.as_degrees(), angle::DEG};
+			case angle::RAD:
+				return {a.value + b.as_radians(), angle::RAD};
+			case angle::TURN:
+				return {a.value + b.as_turns(), angle::TURN};
 		}
+		std::unreachable();
 	}
 	
 	angle operator-(const angle& a, const angle& b) noexcept {
-		if( a.is_deg ) {
-			return {a.value - b.as_degrees(), true};
-		} else {
-			return {a.value - b.as_radians(), false};
+		switch( a.unit ) {
+			case angle::DEG:
+				return {a.value - b.as_degrees(), angle::DEG};
+			case angle::RAD:
+				return {a.value - b.as_radians(), angle::RAD};
+			case angle::TURN:
+				return {a.value - b.as_turns(), angle::TURN};
 		}
+		std::unreachable();
 	}
 	angle operator*(const angle& a, float m) noexcept {
-		return {a.value * m, a.is_deg};
+		return {a.value * m, a.unit};
 	}
 	
 	angle operator*(float m, const angle& a) noexcept {
-		return {a.value * m, a.is_deg};
+		return {a.value * m, a.unit};
 	}
 	
 	angle operator/(const angle& a, float div) {
-		return {a.value / div, a.is_deg};
+		return {a.value / div, a.unit};
 	}
 	
 	angle operator-(const angle& a) noexcept {
-		return {- a.value, a.is_deg};
+		return {- a.value, a.unit};
 	}
 	
 	std::strong_ordering operator<=>(const angle& lhs, const angle& rhs) noexcept {
-		if( lhs.is_deg ) {
-			if( lhs.value < rhs.as_degrees() ) {
-				return std::strong_ordering::less;
-			} else if( lhs.value > rhs.as_degrees() ) {
-				return std::strong_ordering::greater;
-			}
-			return std::strong_ordering::equivalent;
-		} else {
-			if( lhs.value < rhs.as_radians() ) {
-				return std::strong_ordering::less;
-			} else if( lhs.value > rhs.as_radians() ) {
-				return std::strong_ordering::greater;
-			}
-			return std::strong_ordering::equivalent;
+		switch( lhs.unit ) {
+			case angle::DEG:
+				if( lhs.value < rhs.as_degrees() ) {
+					return std::strong_ordering::less;
+				} else if( lhs.value > rhs.as_degrees() ) {
+					return std::strong_ordering::greater;
+				}
+				return std::strong_ordering::equivalent;
+			case angle::RAD:
+				if( lhs.value < rhs.as_radians() ) {
+					return std::strong_ordering::less;
+				} else if( lhs.value > rhs.as_radians() ) {
+					return std::strong_ordering::greater;
+				}
+				return std::strong_ordering::equivalent;
+			case angle::TURN:
+				if( lhs.value < rhs.as_turns() ) {
+					return std::strong_ordering::less;
+				} else if( lhs.value > rhs.as_turns() ) {
+					return std::strong_ordering::greater;
+				}
+				return std::strong_ordering::equivalent;
 		}
+		std::unreachable();
 	}
 	
 	angle degrees(float value) noexcept {
-		return {value, true};
+		return {value, angle::DEG};
 	}
 	
 	angle radians(float value) noexcept {
-		return {value, false};
+		return {value, angle::RAD};
 	}
 	
 	angle turns(float value) noexcept {
-		return {360.0f * value, true};
+		return {value, angle::TURN};
 	}
 	
 	angle angle::clamp360() const noexcept {
 		float nv = value;
 		float v360;
-		if( is_deg ) {
-			v360 = 360.0f;
-		} else {
-			v360 = 2 * std::numbers::pi_v<float>;
+		switch( unit ) {
+			case DEG:
+				v360 = 360.0f;
+				break;
+			case RAD:
+				v360 = 2 * std::numbers::pi_v<float>;
+				break;
+			case TURN:
+				v360 = 1.0f;
+				break;
 		}
 		
 		if( nv < 0.0f ) { nv = 0.0f; }
 		if( nv > v360 ) { nv = v360; }
-		return {nv, is_deg};
+		return {nv, unit};
 	}
 	
 	angle angle::clamp180() const noexcept {
 		float nv = value;
 		float v180;
-		if( is_deg ) {
-			v180 = 180.0f;
-		} else {
-			v180 = std::numbers::pi_v<float>;
+		switch( unit ) {
+			case DEG:
+				v180 = 180.0f;
+				break;
+			case RAD:
+				v180 = std::numbers::pi_v<float>;
+				break;
+			case TURN:
+				v180 = 0.5f;
+				break;
 		}
 		
 		if( nv < -v180 ) { nv = -v180; }
 		if( nv > v180 ) { nv = v180; }
-		return {nv, is_deg};
+		return {nv, unit};
 	}
 	
 	angle angle::norm360() const noexcept {
 		float nv = value;
 		float v360;
-		if( is_deg ) {
-			v360 = 360.0f;
-		} else {
-			v360 = 2 * std::numbers::pi_v<float>;
+		switch( unit ) {
+			case DEG:
+				v360 = 360.0f;
+				break;
+			case RAD:
+				v360 = 2 * std::numbers::pi_v<float>;
+				break;
+			case TURN:
+				v360 = 1.0f;
+				break;
 		}
 		
 		while( nv < 0.0f ) {
@@ -215,16 +286,22 @@ namespace math {
 		while( nv > v360 ) {
 			nv -= v360;
 		}
-		return {nv, is_deg};
+		return {nv, unit};
 	}
 	
 	angle angle::norm180() const noexcept {
 		float nv = value;
 		float v180;
-		if( is_deg ) {
-			v180 = 180.0f;
-		} else {
-			v180 = std::numbers::pi_v<float>;
+		switch( unit ) {
+			case DEG:
+				v180 = 180.0f;
+				break;
+			case RAD:
+				v180 = std::numbers::pi_v<float>;
+				break;
+			case TURN:
+				v180 = 0.5f;
+				break;
 		}
 		
 		while( nv < -v180 ) {
@@ -233,7 +310,7 @@ namespace math {
 		while( nv > v180 ) {
 			nv -= 2 * v180;
 		}
-		return {nv, is_deg};
+		return {nv, unit};
 	}
 	
 	float sin(const angle& a) {

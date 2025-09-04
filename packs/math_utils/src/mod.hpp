@@ -147,14 +147,14 @@ namespace math {
 		where:
 		    ╭  1    if signum(r_T) != signum(b)
 		I = ┤  
-		    ╰ 0    otherwise
+		    ╰  0    otherwise
 		r_T = trunc_mod(a,b)
 		signum(n) = returns the sign of n
 	*/
 	template<std::integral Int>
 	Int F_mod(Int a, Int b) {
 		auto r = trunc_mod(a,b);
-		if( (r > 0 && b < 0) || (r < 0 && b > 0) ) {
+		if( (r > Int(0) && b < Int(0)) || (r < Int(0) && b > Int(0)) ) {
 			r += b;
 		}
 		return r;

@@ -34,9 +34,12 @@ For more information, please refer to <https://unlicense.org>
 namespace math {
 
 	class angle {
-		bool is_deg;
+		enum Unit {
+			DEG, RAD, TURN
+		};
+		Unit unit;
 		float value;
-		explicit(false) angle(float v, bool d) noexcept;
+		explicit(false) angle(float v, Unit u) noexcept;
 	public:
 		angle(const angle& other) = default;
 		angle& operator=(const angle& other) = default;
