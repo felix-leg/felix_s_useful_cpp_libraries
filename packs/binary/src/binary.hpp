@@ -29,18 +29,19 @@ For more information, please refer to <https://unlicense.org>
 #ifndef FELIXS_PACK_BINARY
 #define FELIXS_PACK_BINARY
 
-#include <string>
+#include <cstdint>
 #include <initializer_list>
 #include <span>
+#include <string>
 
 class binary {
 	private:
-		unsigned char* bin_data;
+		uint8_t* bin_data;
 		size_t bin_len;
 	public:
 		explicit(false) binary() noexcept;
-		explicit(true) binary(const unsigned char* ptr, const size_t len) noexcept;
-		binary(std::initializer_list<unsigned char> l) noexcept;
+		explicit(true) binary(const uint8_t* ptr, const size_t len) noexcept;
+		binary(std::initializer_list<uint8_t> l) noexcept;
 		binary(const binary& other) noexcept;
 		binary(binary&& other) noexcept;
 		binary& operator=(const binary& other) noexcept;
@@ -48,16 +49,17 @@ class binary {
 		~binary();
 		
 		[[nodiscard]] static binary zeroes(size_t len) noexcept;
-		[[nodiscard]] static binary move_into(unsigned char* ptr, size_t len) noexcept;
+		[[nodiscard]] static binary move_into(uint8_t* ptr, size_t len) noexcept;
 		
 		// @group Basic set
 		// @{
 		[[nodiscard]] bool is_empty() const noexcept;
 		[[nodiscard]] size_t length() const noexcept;
-		[[nodiscard]] unsigned char* data() noexcept;
-		[[nodiscard]] const unsigned char* data() const noexcept;
+		[[nodiscard]] uint8_t* data() noexcept;
+		[[nodiscard]] const uint8_t* data() const noexcept;
 		[[nodiscard]] std::string to_hex_string(bool upper = false) const noexcept;
 		[[nodiscard]] std::string to_bin_string() const noexcept;
+		[[nodiscard]] std::string stringify() const noexcept;
 		// @}
 		
 		// @group Casting
@@ -71,7 +73,7 @@ class binary {
 			return reinterpret_cast<const OUT*>(bin_data);
 		}
 		
-		template<typename OUT = unsigned char>
+		template<typename OUT = uint8_t>
 		[[nodiscard]] std::span<OUT> as_span() noexcept {
 			return std::span<OUT>(reinterpret_cast<OUT*>(bin_data), bin_len / sizeof(OUT));
 		}
@@ -88,20 +90,20 @@ class binary {
 		
 		// @group Value access
 		// @{
-		unsigned char& at(size_t index);
-		const unsigned char& at(size_t index) const;
+		uint8_t& at(size_t index);
+		const uint8_t& at(size_t index) const;
 		
-		unsigned char get(size_t index, unsigned char default_value) const noexcept;
-		bool set(size_t index, unsigned char value) noexcept;
+		uint8_t get(size_t index, uint8_t default_value) const noexcept;
+		bool set(size_t index, uint8_t value) noexcept;
 		// @}
 		
 		// @group Iterators
 		// @{
-		unsigned char* begin() noexcept;
-		const unsigned char* begin() const noexcept;
+		uint8_t* begin() noexcept;
+		const uint8_t* begin() const noexcept;
 		
-		unsigned char* end() noexcept;
-		const unsigned char* end() const noexcept;
+		uint8_t* end() noexcept;
+		const uint8_t* end() const noexcept;
 		// @}
 		
 		// @group Operators

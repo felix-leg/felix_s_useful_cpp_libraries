@@ -36,7 +36,7 @@ For more information, please refer to <https://unlicense.org>
 BOOST_AUTO_TEST_CASE( basic_construction ) {
 	binary empty_value{};
 	auto txt = "test";
-	binary txt_value{reinterpret_cast<const unsigned char*>(txt), 5};
+	binary txt_value{reinterpret_cast<const uint8_t*>(txt), 5};
 	binary zero_value = binary::zeroes(3);
 
 	BOOST_TEST_REQUIRE( empty_value.is_empty() );
@@ -60,8 +60,8 @@ BOOST_AUTO_TEST_CASE( basic_construction ) {
 
 BOOST_AUTO_TEST_CASE( data_move ) {
 	auto txt = "test";
-	auto txt_copy = new unsigned char[5];
-	for(int i=0; i<5; ++i) txt_copy[i] = txt[i];
+	auto txt_copy = new uint8_t[5];
+	for(uint8_t i=0; i<5; ++i) txt_copy[i] = txt[i];
 	binary txt_value = binary::move_into(txt_copy, 5);
 
 	BOOST_TEST_REQUIRE( txt_value.data() != nullptr );
