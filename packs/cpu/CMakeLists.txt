@@ -37,10 +37,26 @@ enable_testing()
 include("../system_detect.cmake")
 
 #the library
-add_library(tested_lib "src/prefetch.hpp" "src/prefetch.cpp")
+add_library(tested_lib
+	"src/prefetch.hpp" "src/prefetch.cpp"
+	"src/arithmetic.hpp" "src/arithmetic.cpp"
+)
 target_include_directories(tested_lib PRIVATE "${CMAKE_SOURCE_DIR}/src")
 set_target_env_options(tested_lib)
 if(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
 target_compile_options(tested_lib PRIVATE "-masm=intel")
 endif()
 
+#the test
+add_executable(the_test "test/cpu_test.cpp")
+target_link_libraries(the_test PRIVATE tested_lib Boost::unit_test_framework)
+set_target_env_options(the_test)
+
+add_test(NAME "main_test" COMMAND "the_test")
+add_test(NAME "build_test"
+	COMMAND
+		"${CMAKE_COMMAND}"
+		--build "${CMAKE_BINARY_DIR}"
+		--target "the_test"
+)
+set_tests_properties("main_test" PROPERTIES DEPENDS "build_test")
