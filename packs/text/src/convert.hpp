@@ -41,8 +41,9 @@ namespace txt {
 	
 	#ifdef APP_SYSTEM_IS_MSWIN
 	[[nodiscard]] std::wstring utf8_to_mswin(const std::string& from) noexcept;
-	[[nodiscard]] std::wstring utf8_to_mswin(const std::string_view& from) noexcept;
+	[[nodiscard]] std::wstring utf8_to_mswin(std::string_view from) noexcept;
 	[[nodiscard]] std::string mswin_to_utf8(const std::wstring& from) noexcept;
+	[[nodiscard]] std::string mswin_to_utf8(const std::wstring_view from) noexcept;
 	[[nodiscard]] std::string mswin_to_utf8(const wchar_t* from_ptr, size_t from_size) noexcept;
 	#endif
 	

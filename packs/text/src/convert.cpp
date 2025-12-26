@@ -45,6 +45,8 @@ constexpr const char* UTF_32_TYPE = (std::endian::native == std::endian::big) ? 
 #	define NOMINMAX
 #	define VC_EXTRALEAN
 #	include <windows.h>
+
+#	include <limits>
 #endif
 
 namespace txt {
@@ -60,25 +62,22 @@ namespace txt {
 		if( i_state != ICONV_ERR ) {
 			auto in_buf = const_cast<char*>(reinterpret_cast<const char*>(from.c_str()));
 			size_t in_avail = from.length() * sizeof(char32_t);
-			auto out_a = new char[in_avail+1];
-			auto out_a_size = in_avail;
-			out_a[in_avail] = '\0';
-			auto out_buf = out_a;
+			std::string out_str{in_avail+1, '\0', std::string::allocator_type{}};
+			auto out_str_size = in_avail;
+			auto out_buf = out_str.data();
 			size_t out_avail = in_avail;
 			
 			size_t i_result = iconv(i_state, &in_buf, &in_avail, &out_buf, &out_avail);
 			if( i_result != SIZE_T_ERR ) {
-				std::string out_str{out_a, out_a_size - out_avail};
-				delete[] out_a;
+				out_str.resize(out_str_size - out_avail);
 				iconv_close(i_state);
 				return out_str;
 			}
 			//error
-			delete[] out_a;
 			iconv_close(i_state);
 		}
 		#endif
-		std::string old {std::setlocale(LC_CTYPE, nullptr)};
+		std::string old_locale {std::setlocale(LC_CTYPE, nullptr)};
 		std::setlocale(LC_CTYPE, "en_US.utf8");
 		
 		std::string result{};
@@ -92,7 +91,7 @@ namespace txt {
 			}
 		}
 		
-		std::setlocale(LC_CTYPE, old.c_str());
+		std::setlocale(LC_CTYPE, old_locale.c_str());
 		return result;
 	}
 	
@@ -101,26 +100,24 @@ namespace txt {
 		iconv_t i_state;
 		i_state = iconv_open(UTF_32_TYPE, "UTF-8");
 		if( i_state != ICONV_ERR ) {
-			auto in_buf = const_cast<char*>(from.c_str());
+			auto in_buf = const_cast<char*>(from.data());
 			size_t in_avail = from.length() + 1;
-			auto out_a = new char32_t[in_avail];
-			auto out_a_size = in_avail-1;
-			auto out_buf = reinterpret_cast<char*>(out_a);
+			std::u32string out_str{in_avail, U'\0', std::u32string::allocator_type{}};
+			auto out_str_size = in_avail-1;
+			auto out_buf = reinterpret_cast<char*>(out_str.data());
 			size_t out_avail = in_avail * sizeof(char32_t);
 			
 			size_t i_result = iconv(i_state, &in_buf, &in_avail, &out_buf, &out_avail);
 			if( i_result != SIZE_T_ERR ) {
-				std::u32string out_str{out_a, out_a_size - (out_avail / sizeof(char32_t))};
-				delete[] out_a;
+				out_str.resize(out_str_size - (out_avail / sizeof(char32_t)));
 				iconv_close(i_state);
 				return out_str;
 			}
 			//error
-			delete[] out_a;
 			iconv_close(i_state);
 		}
 		#endif
-		std::string old {std::setlocale(LC_CTYPE, nullptr)};
+		std::string old_locale {std::setlocale(LC_CTYPE, nullptr)};
 		std::setlocale(LC_CTYPE, "en_US.utf8");
 		
 		std::u32string result{};
@@ -138,7 +135,7 @@ namespace txt {
 			ptr += rc;
 		}
 		
-		std::setlocale(LC_CTYPE, old.c_str());
+		std::setlocale(LC_CTYPE, old_locale.c_str());
 		return result;
 	}
 	
@@ -149,25 +146,22 @@ namespace txt {
 		if( i_state != ICONV_ERR ) {
 			auto in_buf = const_cast<char*>(reinterpret_cast<const char*>(from.data()));
 			size_t in_avail = from.length() * sizeof(char32_t);
-			auto out_a = new char[in_avail+1];
-			auto out_a_size = in_avail;
-			out_a[in_avail] = '\0';
-			auto out_buf = out_a;
+			std::string out_str{in_avail+1, '\0', std::string::allocator_type{}};
+			auto out_str_size = in_avail;
+			auto out_buf = out_str.data();
 			size_t out_avail = in_avail;
 			
 			size_t i_result = iconv(i_state, &in_buf, &in_avail, &out_buf, &out_avail);
 			if( i_result != SIZE_T_ERR ) {
-				std::string out_str{out_a, out_a_size - out_avail};
-				delete[] out_a;
+				out_str.resize(out_str_size - out_avail);
 				iconv_close(i_state);
 				return out_str;
 			}
 			//error
-			delete[] out_a;
 			iconv_close(i_state);
 		}
 		#endif
-		std::string old {std::setlocale(LC_CTYPE, nullptr)};
+		std::string old_locale {std::setlocale(LC_CTYPE, nullptr)};
 		std::setlocale(LC_CTYPE, "en_US.utf8");
 		
 		std::string result{};
@@ -181,7 +175,7 @@ namespace txt {
 			}
 		}
 		
-		std::setlocale(LC_CTYPE, old.c_str());
+		std::setlocale(LC_CTYPE, old_locale.c_str());
 		return result;
 	}
 	
@@ -192,24 +186,22 @@ namespace txt {
 		if( i_state != ICONV_ERR ) {
 			auto in_buf = const_cast<char*>(from.data());
 			size_t in_avail = from.length() + 1;
-			auto out_a = new char32_t[in_avail];
-			auto out_a_size = in_avail-1;
-			auto out_buf = reinterpret_cast<char*>(out_a);
+			std::u32string out_str{in_avail, U'\0', std::u32string::allocator_type{}};
+			auto out_str_size = in_avail-1;
+			auto out_buf = reinterpret_cast<char*>(out_str.data());
 			size_t out_avail = in_avail * sizeof(char32_t);
 			
 			size_t i_result = iconv(i_state, &in_buf, &in_avail, &out_buf, &out_avail);
 			if( i_result != SIZE_T_ERR ) {
-				std::u32string out_str{out_a, out_a_size - (out_avail / sizeof(char32_t))};
-				delete[] out_a;
+				out_str.resize(out_str_size - (out_avail / sizeof(char32_t)));
 				iconv_close(i_state);
 				return out_str;
 			}
 			//error
-			delete[] out_a;
 			iconv_close(i_state);
 		}
 		#endif
-		std::string old {std::setlocale(LC_CTYPE, nullptr)};
+		std::string old_locale {std::setlocale(LC_CTYPE, nullptr)};
 		std::setlocale(LC_CTYPE, "en_US.utf8");
 		
 		std::u32string result{};
@@ -227,7 +219,7 @@ namespace txt {
 			ptr += rc;
 		}
 		
-		std::setlocale(LC_CTYPE, old.c_str());
+		std::setlocale(LC_CTYPE, old_locale.c_str());
 		return result;
 	}
 	
@@ -236,25 +228,38 @@ namespace txt {
 		return utf8_to_mswin(static_cast<std::string_view>(from));
 	}
 	
-	std::wstring utf8_to_mswin(const std::string_view& from) noexcept {
-		wchar_t* result;
+	std::wstring utf8_to_mswin(std::string_view from) noexcept {
+		constexpr DWORD kFlags = MB_ERR_INVALID_CHARS;
+		bool partial = false;
+		int from_size;
+		if( from.size() > static_cast<size_t>(std::numeric_limits<int>::max()) ) {
+			from_size = std::numeric_limits<int>::max();
+			partial = true;
+			while( from_size > 0 && from[from_size] & 0x80 != 0 ) {
+				--from_size;
+			}
+		} else {
+			from_size = static_cast<int>(from.size());
+		}
+		
 		int required_size = MultiByteToWideChar(
-			CP_UTF8, 0, from.data(), static_cast<int>(from.size()),
+			CP_UTF8, kFlags, from.data(), from_size,
 			nullptr, 0
 		);
 		if( required_size > 0 ) {
-			result = new wchar_t[required_size];
+			std::wstring result{required_size, L'\0', std::wstring::allocator_type{}};
 			int status = MultiByteToWideChar(
-				CP_UTF8, 0, from.data(), static_cast<int>(from.size()),
-				result, required_size
+				CP_UTF8, kFlags, from.data(), static_cast<int>(from.size()),
+				result.data(), required_size
 			);
 			if( status == 0 ) { //error
-				delete[] result;
 				return L"";
 			} else {
-				std::wstring result_str{result, static_cast<uint64_t>(required_size)};
-				delete[] result;
-				return result_str;
+				if( partial ) {
+					from.remove_prefix(from_size);
+					return result + utf8_to_mswin(from);
+				}
+				return result;
 			}
 		} else { //conversion error
 			return L"";
@@ -262,28 +267,45 @@ namespace txt {
 	}
 	
 	std::string mswin_to_utf8(const std::wstring& from) noexcept {
-		return mswin_to_utf8(from.c_str(), from.length() + 1);
+		return mswin_to_utf8(static_cast<std::wstring_view>(from));
 	}
 	
 	std::string mswin_to_utf8(const wchar_t* from_ptr, size_t from_size) noexcept {
-		char* result = nullptr;
+		return mswin_to_utf8(std::wstring_view(from_ptr, from_size));
+	}
+	
+	std::string mswin_to_utf8(const std::wstring_view from) noexcept {
+		constexpr DWORD kFlags = WC_ERR_INVALID_CHARS;
+		bool partial = false;
+		DWORD from_size;
+		if( from.size() > static_cast<size_t>(std::numeric_limits<DWORD>::max()) ) {
+			from_size = std::numeric_limits<DWORD>::max();
+			partial = true;
+			while( from_size > 0 && from[from_size] & 0xFC == 0xDC ) {
+				--from_size;
+			}
+		} else {
+			from_size = static_cast<DWORD>(from.size());
+		}
+		
 		int required_size = WideCharToMultiByte(
-			CP_UTF8, 0, from_ptr, static_cast<DWORD>(from_size),
+			CP_UTF8, kFlags, from.data(), from_size,
 			nullptr, 0, nullptr, nullptr
 		);
 		if( required_size > 0 ) {
-			result = new char[required_size];
+			std::string result{required_size, '\0', std::string::allocator_type{}};
 			int status = WideCharToMultiByte(
-				CP_UTF8, 0, from_ptr, static_cast<DWORD>(from_size),
-				result, required_size, nullptr, nullptr
+				CP_UTF8, kFlags, from_ptr, static_cast<DWORD>(from_size),
+				result.data(), required_size, nullptr, nullptr
 			);
 			if( status == 0 ) {//error
-				delete[] result;
 				return "";
 			} else {
-				std::string result_str{result, required_size};
-				delete[] result;
-				return result_str;
+				if( partial ) {
+					from.remove_prefix(from_size);
+					return result + mswin_to_utf8(from);
+				}
+				return result;
 			}
 		} else { //conversion error
 			return "";
