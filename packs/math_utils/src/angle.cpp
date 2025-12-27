@@ -144,7 +144,7 @@ namespace math {
 				tol = tolerance.as_turns();
 				break;
 		}
-		return std::fabsf(diff) <= std::fabsf(tol);
+		return std::fabs(diff) <= std::fabs(tol);
 	}
 	
 	angle operator+(const angle& a, const angle& b) noexcept {
