@@ -33,8 +33,14 @@ For more information, please refer to <https://unlicense.org>
 #include <limits>
 #include <charconv>
 #include <system_error>
-#include <stdckdint.h>
 #include <utility>
+
+#if __has_include(<stdckdint.h>)
+	#define HAS_CKDINT
+	#include <stdckdint.h>
+#else
+	#warning Checked aritmetic operations are not available on your system
+#endif
 
 typedef bool _Bool; // for <stdckdint.h>
 
@@ -95,60 +101,84 @@ signed long long LongLong::abs(signed long long x) {
 	THE_FN(signed long long, LongLong, false) \
 	THE_FN(unsigned long long, ULongLong, true)
 
-#define THE_FN(type, ns, is_unsigned) type ns::add_wrapped(type a, type b) noexcept { \
-	type r; \
-	[[maybe_unused]] bool ov = ckd_add(&r, a, b); \
-	return r; \
-}
+#ifdef HAS_CKDINT
+	#define THE_FN(type, ns, is_unsigned) type ns::add_wrapped(type a, type b) noexcept { \
+		type r; \
+		[[maybe_unused]] bool ov = ckd_add(&r, a, b); \
+		return r; \
+	}
+#else
+	#define THE_FN(type, ns, is_unsigned) type ns::add_wrapped(type a, type b) noexcept { \
+		return a + b; \
+	}
+#endif
 
 THE_SET()
 
 #undef THE_FN
-#define THE_FN(type, ns, is_unsigned) type ns::sub_wrapped(type a, type b) noexcept { \
-	type r; \
-	[[maybe_unused]] bool ov = ckd_sub(&r, a, b); \
-	return r; \
-}
+#ifdef HAS_CKDINT
+	#define THE_FN(type, ns, is_unsigned) type ns::sub_wrapped(type a, type b) noexcept { \
+		type r; \
+		[[maybe_unused]] bool ov = ckd_sub(&r, a, b); \
+		return r; \
+	}
+#else
+	#define THE_FN(type, ns, is_unsigned) type ns::sub_wrapped(type a, type b) noexcept { \
+		return a - b; \
+	}
+#endif
 
 THE_SET()
 
 #undef THE_FN
-#define THE_FN(type, ns, is_unsigned) type ns::add_clamped(type a, type b) noexcept { \
-	type r; \
-	bool ov = ckd_add(&r, a, b); \
-	if( ov ) { \
-		if constexpr ( is_unsigned ) { \
-			return ns::max_value; \
-		} else { \
-			if( a < 0 && b < 0 ) { \
-				return ns::min_value; \
-			} else { \
+#ifdef HAS_CKDINT
+	#define THE_FN(type, ns, is_unsigned) type ns::add_clamped(type a, type b) noexcept { \
+		type r; \
+		bool ov = ckd_add(&r, a, b); \
+		if( ov ) { \
+			if constexpr ( is_unsigned ) { \
 				return ns::max_value; \
+			} else { \
+				if( a < 0 && b < 0 ) { \
+					return ns::min_value; \
+				} else { \
+					return ns::max_value; \
+				} \
 			} \
 		} \
-	} \
-	return r; \
-}
+		return r; \
+	}
+#else
+	#define THE_FN(type, ns, is_unsigned) type ns::add_clamped(type a, type b) noexcept { \
+		return a + b; \
+	}
+#endif
 
 THE_SET()
 
 #undef THE_FN
-#define THE_FN(type, ns, is_unsigned) type ns::sub_clamped(type a, type b) noexcept { \
-	type r; \
-	bool ov = ckd_sub(&r, a, b); \
-	if( ov ) { \
-		if constexpr ( is_unsigned ) { \
-			return 0; \
-		} else { \
-			if( a < 0 && b > 0 ) { \
-				return ns::min_value; \
+#ifdef HAS_CKDINT
+	#define THE_FN(type, ns, is_unsigned) type ns::sub_clamped(type a, type b) noexcept { \
+		type r; \
+		bool ov = ckd_sub(&r, a, b); \
+		if( ov ) { \
+			if constexpr ( is_unsigned ) { \
+				return 0; \
 			} else { \
-				return ns::max_value; \
+				if( a < 0 && b > 0 ) { \
+					return ns::min_value; \
+				} else { \
+					return ns::max_value; \
+				} \
 			} \
 		} \
-	} \
-	return r; \
-}
+		return r; \
+	}
+#else
+	#define THE_FN(type, ns, is_unsigned) type ns::sub_clamped(type a, type b) noexcept { \
+		return a - b; \
+	}
+#endif
 
 THE_SET()
 
