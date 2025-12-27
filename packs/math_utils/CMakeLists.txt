@@ -31,10 +31,10 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 project(MathUtils VERSION 0.1.0 LANGUAGES CXX)
 
+include("../common.cmake")
+
 find_package(Boost 1.83 COMPONENTS unit_test_framework REQUIRED)
 enable_testing()
-
-include("../common.cmake")
 
 #the library
 add_library(tested_lib

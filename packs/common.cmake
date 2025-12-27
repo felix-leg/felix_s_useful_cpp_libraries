@@ -23,10 +23,13 @@
 #
 #For more information, please refer to <https://unlicense.org>
 #
+message(STATUS "Boost_DIR=${Boost_DIR}")
+if(CMAKE_HOST_WIN32)
+	list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/../../cmake")
+endif()
+
 set(HOST_DEF "")
 set(HOST_ARCH "")
-
-message("Boost_DIR=${Boost_DIR}")
 
 if(CMAKE_HOST_APPLE)
 	set(HOST_DEF "APP_SYSTEM_IS_MACOS")
