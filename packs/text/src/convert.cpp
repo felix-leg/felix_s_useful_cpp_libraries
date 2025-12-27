@@ -235,7 +235,7 @@ namespace txt {
 		if( from.size() > static_cast<size_t>(std::numeric_limits<int>::max()) ) {
 			from_size = std::numeric_limits<int>::max();
 			partial = true;
-			while( from_size > 0 && from[from_size] & 0x80 != 0 ) {
+			while( from_size > 0 && (from[from_size] & 0x80 != 0) ) {
 				--from_size;
 			}
 		} else {
@@ -274,14 +274,14 @@ namespace txt {
 		return mswin_to_utf8(std::wstring_view(from_ptr, from_size));
 	}
 	
-	std::string mswin_to_utf8(const std::wstring_view from) noexcept {
+	std::string mswin_to_utf8(std::wstring_view from) noexcept {
 		constexpr DWORD kFlags = WC_ERR_INVALID_CHARS;
 		bool partial = false;
 		DWORD from_size;
 		if( from.size() > static_cast<size_t>(std::numeric_limits<DWORD>::max()) ) {
 			from_size = std::numeric_limits<DWORD>::max();
 			partial = true;
-			while( from_size > 0 && from[from_size] & 0xFC == 0xDC ) {
+			while( from_size > 0 && (from[from_size] & 0xFC == 0xDC) ) {
 				--from_size;
 			}
 		} else {
