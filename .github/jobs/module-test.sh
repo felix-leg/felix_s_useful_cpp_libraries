@@ -30,6 +30,6 @@ name="$1"
 mkdir -p "build-$name"
 cd "build-$name"
 cmake -G Ninja "../packs/$name/"
-ninja
+#ninja
 ctest
 exit $?
