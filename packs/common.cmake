@@ -23,10 +23,7 @@
 #
 #For more information, please refer to <https://unlicense.org>
 #
-message(STATUS "Boost_DIR=${Boost_DIR}")
-message(STATUS "BOOST_ROOT=${BOOST_ROOT}")
-message(STATUS "BOOST_INCLUDEDIR=${BOOST_INCLUDEDIR}")
-message(STATUS "BOOST_LIBRARYDIR=${BOOST_LIBRARYDIR}")
+
 if(CMAKE_HOST_WIN32)
 	list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/../../cmake")
 endif()
@@ -63,7 +60,7 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
 endif()
 if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
 	set(COMPILER_DEF "APP_COMPILER_IS_MSVC")
-	set(COMPILER_FLAGS "/permissive;/W4;/utf-8")
+	set(COMPILER_FLAGS "/permissive;/W4;/utf-8;/wd5030")
 endif()
 
 function(set_target_env_options Target)
