@@ -27,14 +27,15 @@ param([string]$name='')
 
 New-Item build-$name -ItemType Directory -ea 0
 cd build-$name
-[string]$boost = $Env:BOOST_ROOT
-$boost += "\boost\boost"
-cmake -DCMAKE_BUILD_TYPE=Debug "-DBoost_DIR=$boost" "-DBOOST_ROOT=$boost" "-DBOOST_INCLUDEDIR=$boost\include" "-DBOOST_LIBRARYDIR=$boost\lib" -S ../packs/$name/
+#[string]$boost = $Env:BOOST_ROOT
+#$boost += "\boost\boost"
+#cmake -DCMAKE_BUILD_TYPE=Debug "-DBoost_DIR=$boost" "-DBOOST_ROOT=$boost" "-DBOOST_INCLUDEDIR=$boost\include" "-DBOOST_LIBRARYDIR=$boost\lib" -S ../packs/$name/
+cmake -DCMAKE_BUILD_TYPE=Debug -S ../packs/$name/
 #cmake --build . --target "the_test" --config Debug
-ctest -C Debug
-if ($LASTEXITCODE -ne 0) {
-	cat compile_result.txt
-}
+ctest -C Debug --output-on-failure
+#if ($LASTEXITCODE -ne 0) {
+#	cat compile_result.txt
+#}
 tree
 #return $LASTEXITCODE
 

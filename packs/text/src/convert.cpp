@@ -235,7 +235,7 @@ namespace txt {
 		if( from.size() > static_cast<size_t>(std::numeric_limits<int>::max()) ) {
 			from_size = std::numeric_limits<int>::max();
 			partial = true;
-			while( from_size > 0 && (from[from_size] & 0x80 != 0) ) {
+			while( from_size > 0 && ((from[from_size] & 0x80) != 0) ) {
 				--from_size;
 			}
 		} else {
@@ -281,7 +281,7 @@ namespace txt {
 		if( from.size() > static_cast<size_t>(std::numeric_limits<DWORD>::max()) ) {
 			from_size = std::numeric_limits<DWORD>::max();
 			partial = true;
-			while( from_size > 0 && (from[from_size] & 0xFC == 0xDC) ) {
+			while( from_size > 0 && ((from[from_size] & 0xFC) == 0xDC) ) {
 				--from_size;
 			}
 		} else {

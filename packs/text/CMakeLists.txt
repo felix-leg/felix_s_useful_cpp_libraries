@@ -36,6 +36,8 @@ include("../common.cmake")
 find_package(Boost 1.83 COMPONENTS unit_test_framework REQUIRED)
 enable_testing()
 
+message(STATUS "Boost_LIBRARIES: ${Boost_LIBRARIES}")
+
 #the library
 add_library(tested_lib
 	"src/utf32/case.hpp" "src/utf32/case.cpp"
