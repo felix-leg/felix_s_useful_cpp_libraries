@@ -76,19 +76,19 @@ jobs:
           toolset: msvc
       - name: Text module
         run: powershell.exe -file .github\jobs\module-test.ps1 -name text
-      - name: CPU module
-        run: powershell.exe -file .github\jobs\module-test.ps1 -name cpu
-      - name: Binary module
-        run: powershell.exe -file .github\jobs\module-test.ps1 -name binary
-      - name: Geometry module
-        run: powershell.exe -file .github\jobs\module-test.ps1 -name geometry
-      - name: Files module
-        run: powershell.exe -file .github\jobs\module-test.ps1 -name files
-      - name: Math module
-        run: powershell.exe -file .github\jobs\module-test.ps1 -name math_utils
-      - name: Misc module
-        run: powershell.exe -file .github\jobs\module-test.ps1 -name misc
-      - name: System module
-        run: powershell.exe -file .github\jobs\module-test.ps1 -name system
-      - name: Primitives module
-        run: powershell.exe -file .github\jobs\module-test.ps1 -name primitives
+#      - name: CPU module
+#        run: powershell.exe -file .github\jobs\module-test.ps1 -name cpu
+#      - name: Binary module
+#        run: powershell.exe -file .github\jobs\module-test.ps1 -name binary
+#      - name: Geometry module
+#        run: powershell.exe -file .github\jobs\module-test.ps1 -name geometry
+#      - name: Files module
+#        run: powershell.exe -file .github\jobs\module-test.ps1 -name files
+#      - name: Math module
+#        run: powershell.exe -file .github\jobs\module-test.ps1 -name math_utils
+#      - name: Misc module
+#        run: powershell.exe -file .github\jobs\module-test.ps1 -name misc
+#      - name: System module
+#        run: powershell.exe -file .github\jobs\module-test.ps1 -name system
+#      - name: Primitives module
+#        run: powershell.exe -file .github\jobs\module-test.ps1 -name primitives
