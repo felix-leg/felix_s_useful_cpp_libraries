@@ -2,22 +2,63 @@ name: Compile and Test all modules
 run-name: Compiling and testing by ${{ github.actor }}
 on: [push]
 jobs:
-  Compile-Test:
+  Compile-Test-Linux:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
     steps:
       - name: Checkout
         uses: actions/checkout@v5
       - name: Install Boost
         run: sudo apt install libboost-test-dev
       - name: Text module
-        shell: bash
         run: ./.github/jobs/module-test.sh text
       - name: CPU module
-        shell: bash
         run: ./.github/jobs/module-test.sh cpu
       - name: Binary module
-        shell: bash
         run: ./.github/jobs/module-test.sh binary
       - name: Geometry module
-        shell: bash
         run: ./.github/jobs/module-test.sh geometry
+      - name: Files module
+        run: ./.github/jobs/module-test.sh files
+      - name: Math module
+        run: ./.github/jobs/module-test.sh math_utils
+      - name: Misc module
+        run: ./.github/jobs/module-test.sh misc
+      - name: Primitives module
+        run: ./.github/jobs/module-test.sh primitives
+      - name: System module
+        run: ./.github/jobs/module-test.sh system
+  Compile-Test-Windows:
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: powershell
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+      - name: Install Boost
+        uses: MarkusJx/install-boost@v2
+        id: install-boost
+        with:
+          boost_version: 1.83.0
+          toolset: msvc
+      - name: Text module
+        run: powershell.exe -file .github\jobs\module-test.ps1 -name text
+      - name: CPU module
+        run: powershell.exe -file .github\jobs\module-test.ps1 -name cpu
+      - name: Binary module
+        run: powershell.exe -file .github\jobs\module-test.ps1 -name binary
+      - name: Geometry module
+        run: powershell.exe -file .github\jobs\module-test.ps1 -name geometry
+      - name: Files module
+        run: powershell.exe -file .github\jobs\module-test.ps1 -name files
+      - name: Math module
+        run: powershell.exe -file .github\jobs\module-test.ps1 -name math_utils
+      - name: Misc module
+        run: powershell.exe -file .github\jobs\module-test.ps1 -name misc
+      - name: Primitives module
+        run: powershell.exe -file .github\jobs\module-test.ps1 -name primitives
+      - name: System module
+        run: powershell.exe -file .github\jobs\module-test.ps1 -name system

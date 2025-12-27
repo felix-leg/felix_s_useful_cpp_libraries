@@ -64,6 +64,7 @@ add_test(NAME "build_test"
 		"${CMAKE_COMMAND}"
 		--build "${CMAKE_BINARY_DIR}"
 		--target "the_test"
+		--config Debug
 )
 set_tests_properties("main_test" PROPERTIES DEPENDS "build_test" )
 #
@@ -73,6 +74,7 @@ add_test(NAME "build_test2"
 		"${CMAKE_COMMAND}"
 		--build "${CMAKE_BINARY_DIR}"
 		--target "the_test2"
+		--config Debug
 )
 set_tests_properties("sub_test" PROPERTIES DEPENDS "build_test2" )
 #
@@ -82,5 +84,6 @@ add_test(NAME "build_test3"
 		"${CMAKE_COMMAND}"
 		--build "${CMAKE_BINARY_DIR}"
 		--target "the_test3"
+		--config Debug
 )
 set_tests_properties("sub_test2" PROPERTIES DEPENDS "build_test3" )

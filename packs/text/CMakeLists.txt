@@ -72,5 +72,6 @@ add_test(NAME "build_test"
 		"${CMAKE_COMMAND}"
 		--build "${CMAKE_BINARY_DIR}"
 		--target "the_test"
+		--config Debug
 )
 set_tests_properties("main_test" PROPERTIES DEPENDS "build_test" )
