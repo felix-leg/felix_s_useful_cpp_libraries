@@ -11,3 +11,5 @@ jobs:
           pwd
           cd ..
           ls
+          cd felix_s_useful_cpp_libraries
+          ls
