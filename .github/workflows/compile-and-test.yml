@@ -71,8 +71,7 @@ jobs:
         uses: jwlawson/actions-setup-cmake@v2
       - name: Install Boost
         run: |
-          choco install -y cmake --installargs 'ADD_CMAKE_TO_PATH=System'
-          choco install -y boost-msvc-17
+          choco install -y boost-msvc
 #      - name: Install Boost
 #        uses: MarkusJx/install-boost@v2
 #        id: install-boost
