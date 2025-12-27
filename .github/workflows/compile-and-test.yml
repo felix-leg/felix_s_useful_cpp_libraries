@@ -9,4 +9,4 @@ jobs:
         uses: actions/checkout@v5
       - name: Text module
         shell: bash
-        run: ls 
+        run: ./jobs/text-module.sh
