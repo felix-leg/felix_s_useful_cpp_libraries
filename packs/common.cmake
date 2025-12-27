@@ -26,6 +26,8 @@
 set(HOST_DEF "")
 set(HOST_ARCH "")
 
+message("Boost_DIR=${Boost_DIR}")
+
 if(CMAKE_HOST_APPLE)
 	set(HOST_DEF "APP_SYSTEM_IS_MACOS")
 endif()
