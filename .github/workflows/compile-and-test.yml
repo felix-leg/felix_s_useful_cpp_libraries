@@ -11,4 +11,13 @@ jobs:
         run: sudo apt install libboost-all-dev
       - name: Text module
         shell: bash
-        run: ./jobs/text-module.sh
+        run: ./.github/jobs/module-test.sh text
+      - name: CPU module
+        shell: bash
+        run: ./.github/jobs/module-test.sh cpu
+      - name: Binary module
+        shell: bash
+        run: ./.github/jobs/module-test.sh binary
+      - name: Geometry module
+        shell: bash
+        run: ./.github/jobs/module-test.sh geometry
