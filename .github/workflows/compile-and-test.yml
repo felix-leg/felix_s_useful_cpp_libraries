@@ -1,0 +1,12 @@
+name: Compile and Test all modules
+run-name: Compiling and testing by ${{ github.actor }}
+on: [push]
+jobs:
+	Compile-Test:
+		runs-on: ubuntu-latest
+		steps:
+			- name: Text module
+			  uses: actions/checkout@v5
+			  run: |
+				${{ github.workspace }}/.github/jobs/text-module.sh "${{ github.workspace }}"
+			
