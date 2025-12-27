@@ -6,10 +6,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Text module
-        run: |
-          ls ${{ github.workspace }}
-          pwd
-          cd ..
-          ls
-          cd felix_s_useful_cpp_libraries
-          ls
+        working-directory: ./jobs
+        shell: bash
+        run: ./text-module.sh
