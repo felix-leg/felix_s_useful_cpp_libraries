@@ -28,7 +28,7 @@ param([string]$name='')
 New-Item build-$name -ItemType Directory -ea 0
 cd build-$name
 [string]$boost = $Env:BOOST_ROOT
-$boost += "\boost"
+$boost += "\boost\boost"
 Write-Host "Boost:" $boost
 ls $boost
 #cmake -DCMAKE_BUILD_TYPE=Debug "-DBoost_DIR=$boost" -S ../packs/$name/
