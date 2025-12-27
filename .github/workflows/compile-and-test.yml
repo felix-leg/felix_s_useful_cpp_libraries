@@ -5,6 +5,8 @@ jobs:
   Compile-Test:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v5
       - name: Text module
         working-directory: ./jobs
         shell: bash
