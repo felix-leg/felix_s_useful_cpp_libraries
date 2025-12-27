@@ -8,6 +8,5 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
       - name: Text module
-        working-directory: ./jobs
         shell: bash
-        run: ./text-module.sh
+        run: ls 
