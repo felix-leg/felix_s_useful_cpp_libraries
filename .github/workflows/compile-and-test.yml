@@ -8,7 +8,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
       - name: Install Boost
-        run: sudo apt install libboost-unittest-dev
+        run: sudo apt install libboost-test-dev
       - name: Text module
         shell: bash
         run: ./.github/jobs/module-test.sh text
