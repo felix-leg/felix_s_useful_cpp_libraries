@@ -7,4 +7,5 @@ jobs:
     steps:
       - name: Text module
         run: |
-          ${{ github.workspace }}/jobs/text-module.sh "${{ github.workspace }}"
+          #${{ github.workspace }}/jobs/text-module.sh "${{ github.workspace }}"
+          ls ${{ github.workspace }}
