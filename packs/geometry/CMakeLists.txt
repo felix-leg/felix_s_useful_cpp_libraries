@@ -34,7 +34,7 @@ project(Geometry VERSION 0.1.0 LANGUAGES CXX)
 find_package(Boost 1.83 COMPONENTS unit_test_framework REQUIRED)
 enable_testing()
 
-include("../system_detect.cmake")
+include("../common.cmake")
 
 #the library
 add_library(tested_lib
@@ -58,32 +58,7 @@ add_executable(the_test3 "test/other_test.cpp")
 target_link_libraries(the_test3 PRIVATE tested_lib Boost::unit_test_framework)
 set_target_env_options(the_test3)
 
-add_test(NAME "main_test" COMMAND "the_test")
-add_test(NAME "build_test"
-	COMMAND
-		"${CMAKE_COMMAND}"
-		--build "${CMAKE_BINARY_DIR}"
-		--target "the_test"
-		--config Debug
-)
-set_tests_properties("main_test" PROPERTIES DEPENDS "build_test" )
-#
-add_test(NAME "sub_test" COMMAND "the_test2")
-add_test(NAME "build_test2"
-	COMMAND
-		"${CMAKE_COMMAND}"
-		--build "${CMAKE_BINARY_DIR}"
-		--target "the_test2"
-		--config Debug
-)
-set_tests_properties("sub_test" PROPERTIES DEPENDS "build_test2" )
-#
-add_test(NAME "sub_test2" COMMAND "the_test3")
-add_test(NAME "build_test3"
-	COMMAND
-		"${CMAKE_COMMAND}"
-		--build "${CMAKE_BINARY_DIR}"
-		--target "the_test3"
-		--config Debug
-)
-set_tests_properties("sub_test2" PROPERTIES DEPENDS "build_test3" )
+register_test("test" "the_test")
+register_test("sub_test" "the_test2")
+register_test("sub_test2" "the_test3")
+
