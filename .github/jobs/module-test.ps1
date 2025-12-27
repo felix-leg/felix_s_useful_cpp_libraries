@@ -30,8 +30,8 @@ cd build-$name
 [string]$boost = $Env:BOOST_ROOT
 $boost += "\boost\boost"
 Write-Host "Boost:" $boost
-ls $boost
-#cmake -DCMAKE_BUILD_TYPE=Debug "-DBoost_DIR=$boost" -S ../packs/$name/
+#ls $boost
+cmake -DCMAKE_BUILD_TYPE=Debug "-DBoost_DIR=$boost" "-DBOOST_ROOT=$boost" "-DBOOST_INCLUDEDIR=$boost\include" "-DBOOST_LIBRARYDIR=$boost\lib" -S ../packs/$name/
 #ctest
 #return $LASTEXITCODE
 
