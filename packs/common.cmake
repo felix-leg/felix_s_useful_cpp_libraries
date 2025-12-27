@@ -80,8 +80,15 @@ function(register_test Name Cmd)
 		COMMAND
 			"${CMAKE_COMMAND}"
 			--build "${CMAKE_BINARY_DIR}"
+			--target "Compile${Name}"
+	)
+	add_custom_target("Compile${Name}"
+		COMMAND
+			"${CMAKE_COMMAND}"
+			--build "${CMAKE_BINARY_DIR}"
 			--target "${Cmd}"
 			${Cfg}
+			>> compile_result.txt
 	)
 	set_tests_properties("main_${Name}" PROPERTIES DEPENDS "build_${Name}" )
 endfunction()

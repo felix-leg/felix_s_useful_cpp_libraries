@@ -30,8 +30,11 @@ cd build-$name
 [string]$boost = $Env:BOOST_ROOT
 $boost += "\boost\boost"
 cmake -DCMAKE_BUILD_TYPE=Debug "-DBoost_DIR=$boost" "-DBOOST_ROOT=$boost" "-DBOOST_INCLUDEDIR=$boost\include" "-DBOOST_LIBRARYDIR=$boost\lib" -S ../packs/$name/
-cmake --build . --target "the_test" --config Debug
-#ctest -C Debug
+#cmake --build . --target "the_test" --config Debug
+ctest -C Debug
+if ($LASTEXITCODE -ne 0) {
+	cat compile_result.txt
+}
 tree
 #return $LASTEXITCODE
 

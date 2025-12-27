@@ -247,7 +247,7 @@ namespace txt {
 			nullptr, 0
 		);
 		if( required_size > 0 ) {
-			std::wstring result{required_size, L'\0', std::wstring::allocator_type{}};
+			std::wstring result{static_cast<size_t>(required_size), L'\0', std::wstring::allocator_type{}};
 			int status = MultiByteToWideChar(
 				CP_UTF8, kFlags, from.data(), static_cast<int>(from.size()),
 				result.data(), required_size
@@ -293,9 +293,9 @@ namespace txt {
 			nullptr, 0, nullptr, nullptr
 		);
 		if( required_size > 0 ) {
-			std::string result{required_size, '\0', std::string::allocator_type{}};
+			std::string result{static_cast<size_t>(required_size), '\0', std::string::allocator_type{}};
 			int status = WideCharToMultiByte(
-				CP_UTF8, kFlags, from_ptr, static_cast<DWORD>(from_size),
+				CP_UTF8, kFlags, from.data(), from_size,
 				result.data(), required_size, nullptr, nullptr
 			);
 			if( status == 0 ) {//error
