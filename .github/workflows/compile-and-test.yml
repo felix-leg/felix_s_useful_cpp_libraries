@@ -6,6 +6,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Text module
+        uses: actions/checkout@v5
         run: |
-          #${{ github.workspace }}/jobs/text-module.sh "${{ github.workspace }}"
           ls ${{ github.workspace }}
