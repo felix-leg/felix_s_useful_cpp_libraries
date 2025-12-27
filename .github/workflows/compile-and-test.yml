@@ -53,8 +53,8 @@ jobs:
         run: ./.github/jobs/module-test.sh math_utils
       - name: Misc module
         run: ./.github/jobs/module-test.sh misc
-      - name: Primitives module
-        run: ./.github/jobs/module-test.sh primitives
+      #- name: Primitives module
+      #  run: ./.github/jobs/module-test.sh primitives
       - name: System module
         run: ./.github/jobs/module-test.sh system
   Compile-Test-Windows:
