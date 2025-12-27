@@ -71,7 +71,7 @@ jobs:
         uses: jwlawson/actions-setup-cmake@v2
       - name: Install Boost
         run: |
-          choco install -y boost-msvc
+          choco install boost-msvc-14.2
 #      - name: Install Boost
 #        uses: MarkusJx/install-boost@v2
 #        id: install-boost
