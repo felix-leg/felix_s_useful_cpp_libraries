@@ -30,6 +30,6 @@ name="$1"
 mkdir -p "build-$name"
 cd "build-$name"
 cmake -G Ninja "../packs/$name/"
-#ninja
-ctest
+if [[ $? != 0 ]]; then exit 1;fi
+ctest --output-on-failure
 exit $?
