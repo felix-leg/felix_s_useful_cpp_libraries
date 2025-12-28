@@ -24,9 +24,9 @@
 #For more information, please refer to <https://unlicense.org>
 #
 
-if(CMAKE_HOST_WIN32)
-	list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/../../cmake")
-endif()
+#if(CMAKE_HOST_WIN32)
+#	list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/../../cmake")
+#endif()
 
 set(HOST_DEF "")
 set(HOST_ARCH "")
