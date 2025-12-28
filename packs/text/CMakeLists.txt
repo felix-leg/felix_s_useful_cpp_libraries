@@ -65,7 +65,7 @@ set_target_env_options(tested_lib)
 
 #the test
 add_executable(the_test "test/text_utils_test.cpp")
-target_link_libraries(the_test PRIVATE tested_lib Boost::unit_test_framework ${Boost_LIBRARIES})
+target_link_libraries(the_test PRIVATE tested_lib Boost::unit_test_framework)# ${Boost_LIBRARIES})
 set_target_env_options(the_test)
 
 register_test("test" "the_test")

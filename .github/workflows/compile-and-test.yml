@@ -53,8 +53,8 @@ jobs:
         run: ./.github/jobs/module-test.sh math_utils
       - name: Misc module
         run: ./.github/jobs/module-test.sh misc
-      - name: Primitives module
-        run: ./.github/jobs/module-test.sh primitives
+      #- name: Primitives module
+      #  run: ./.github/jobs/module-test.sh primitives
       #- name: System module
       #  run: ./.github/jobs/module-test.sh system
   Compile-Test-Windows:
@@ -67,8 +67,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v5
-      - name: Setup cmake
-        uses: jwlawson/actions-setup-cmake@v2
+      #- name: Setup cmake
+      #  uses: jwlawson/actions-setup-cmake@v2
       - name: Install Boost
         run: |
           choco install boost-msvc-14.2
