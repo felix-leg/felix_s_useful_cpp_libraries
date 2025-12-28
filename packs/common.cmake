@@ -24,9 +24,13 @@
 #For more information, please refer to <https://unlicense.org>
 #
 
-#if(CMAKE_HOST_WIN32)
-#	list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/../../cmake")
-#endif()
+if(CMAKE_HOST_WIN32)
+	list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/../../cmake")
+	if(BUILD_WITH_CI EQUAL 1)#Bug in CI for msvc
+		message(STATUS "MSVC_TOOLSET_VERSION=${MSVC_TOOLSET_VERSION}")
+		set(MSVC_TOOLSET_VERSION 2)
+	endif()
+endif()
 
 set(HOST_DEF "")
 set(HOST_ARCH "")

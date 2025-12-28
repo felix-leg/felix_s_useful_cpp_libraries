@@ -30,7 +30,7 @@ cd build-$name
 #[string]$boost = $Env:BOOST_ROOT
 #$boost += "\boost\boost"
 #cmake -DCMAKE_BUILD_TYPE=Debug "-DBoost_DIR=$boost" "-DBOOST_ROOT=$boost" "-DBOOST_INCLUDEDIR=$boost\include" "-DBOOST_LIBRARYDIR=$boost\lib" -S ../packs/$name/
-cmake -DCMAKE_BUILD_TYPE=Debug -S ../packs/$name/
+cmake -DCMAKE_BUILD_TYPE=Debug -DBUILD_WITH_CI=1 -S ../packs/$name/
 #ls C:/local/boost_1_87_0/lib64-msvc-14.2/
 #ls C:/local/boost_1_87_0
 #cmake --build . --target "the_test" --config Debug
