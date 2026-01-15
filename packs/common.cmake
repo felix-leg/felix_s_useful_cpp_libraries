@@ -26,10 +26,6 @@
 
 if(CMAKE_HOST_WIN32)
 	list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/../../cmake")
-	if(BUILD_WITH_CI EQUAL 1)#Bug in CI for msvc
-		message(STATUS "MSVC_TOOLSET_VERSION=${MSVC_TOOLSET_VERSION}")
-#		set(MSVC_TOOLSET_VERSION 142)
-	endif()
 endif()
 
 set(HOST_DEF "")
@@ -70,6 +66,14 @@ endif()
 function(set_target_env_options Target)
 	target_compile_definitions(${Target} PRIVATE ${HOST_DEF} ${COMPILER_DEF} ${HOST_ARCH})
 	target_compile_options(${Target} PRIVATE "${COMPILER_FLAGS}")
+	get_target_property(TargetType ${Target} TYPE)
+	if(WIN32 AND TargetType STREQUAL EXECUTABLE)
+		add_custom_command (
+			TARGET "${Target}" POST_BUILD
+			COMMAND "${CMAKE_COMMAND}" -E copy -t "$<TARGET_FILE_DIR:${Target}>"
+			"$<TARGET_RUNTIME_DLLS:${Target}>" USES_TERMINAL COMMAND_EXPAND_LISTS
+		)
+	endif()
 endfunction()
 
 function(register_test Name Cmd)

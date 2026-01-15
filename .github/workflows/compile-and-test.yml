@@ -68,17 +68,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
       - name: Install Boost
-        run: |
-          choco install boost-msvc-14.3
+        run: choco install boost-msvc-14.3
       - name: Setup cmake
         uses: jwlawson/actions-setup-cmake@v2
-#      - name: Install Boost
-#        uses: MarkusJx/install-boost@v2
-#        id: install-boost
-#        with:
-#          boost_version: 1.83.0
-#          boost_install_dir: ${{ github.workspace }}\boost
-#          toolset: msvc
       - name: Text module
         run: powershell.exe -file .github\jobs\module-test.ps1 -name text
 #      - name: CPU module
