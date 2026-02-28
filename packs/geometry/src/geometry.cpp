@@ -29,6 +29,7 @@ For more information, please refer to <https://unlicense.org>
 #include "geometry.hpp"
 
 #include <utility>
+#include <cmath>
 
 // SIMD support
 #if __has_include(<simd>)
