@@ -68,9 +68,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
       - name: Setup conan
-        uses: planetmarshall/conan-setup-action@v1.1.0
+        uses: conan-io/setup-conan@v1
         with:
-          version: latest
+          cache_packages: true
 #      - name: Install Boost
 #        run: choco install boost-msvc-14.3
 #      - name: Setup cmake
