@@ -68,7 +68,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
       - name: Setup conan
-        uses: conan-setup-action@v1.0.0
+        uses: planetmarshall/conan-setup-action@v1.1.0
         with:
           version: latest
 #      - name: Install Boost
