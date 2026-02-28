@@ -31,7 +31,7 @@ param([string]$name='')
 cd packs/$name
 
 conan install . --build=missing -s build_type=Debug
-cmake --preset conan-debug -G Ninja
+cmake --preset conan-default -G Ninja
 ctest --build-and-test . build/Debug --build-generator Ninja
 cd build/Debug
 ctest --output-on-failure
