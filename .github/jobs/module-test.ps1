@@ -35,7 +35,7 @@ conan install . --build=missing -s build_type=Debug
 cmake --preset conan-default -G "Visual Studio 17 2022" #-G Ninja
 #ctest --build-and-test . build/Debug --build-generator "Visual Studio 17 2022" #Ninja
 cd build
-ctest --output-on-failure
+ctest --output-on-failure -C Debug
 
 #cmake -DCMAKE_BUILD_TYPE=Debug -S ../packs/$name/
 #ctest --build-and-test ../packs/$name/ . --build-generator Ninja
