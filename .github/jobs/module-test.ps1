@@ -27,7 +27,7 @@ param([string]$name='')
 
 #New-Item build-$name -ItemType Directory -ea 0
 #cd build-$name
-
+pwd
 cd ../packs/$name
 
 conan install . --build=missing -s build_type=Debug
