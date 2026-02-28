@@ -24,9 +24,6 @@
 #For more information, please refer to <https://unlicense.org>
 #
 
-#if(CMAKE_HOST_WIN32)
-#	list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/../../cmake")
-#endif()
 
 set(HOST_DEF "")
 set(HOST_ARCH "")
@@ -78,10 +75,8 @@ endfunction()
 
 function(register_test Name Cmd)
 	set(Cfg "")
-#	set(Prefix "")
 	if(CMAKE_HOST_WIN32)
 		set(Cfg "--config Debug")
-#		set(Prefix "Debug\\")
 	endif()
 	add_test(NAME "main_${Name}" COMMAND "${Cmd}")
 	add_test(NAME "build_${Name}"

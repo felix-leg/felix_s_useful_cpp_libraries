@@ -29,7 +29,6 @@ name="$1"
 
 mkdir -p "build-$name"
 cd "build-$name"
-#cmake -G Ninja "../packs/$name/"
 ctest --build-and-test "../packs/$name" . --build-generator Ninja
 if [[ $? != 0 ]]; then exit 1;fi
 ctest --output-on-failure

@@ -25,26 +25,14 @@
 #
 param([string]$name='')
 
-#New-Item build-$name -ItemType Directory -ea 0
-#cd build-$name
-
 cd packs/$name
 
 conan install . --build=missing -s build_type=Debug -s compiler.cppstd=23
+cmake --preset conan-default #-G "Visual Studio 17 2022"
 
-cmake --preset conan-default -G "Visual Studio 17 2022" #-G Ninja
-#ctest --build-and-test . build/Debug --build-generator "Visual Studio 17 2022" #Ninja
 cd build
+
 ctest --output-on-failure -C Debug
 
-#cmake -DCMAKE_BUILD_TYPE=Debug -S ../packs/$name/
-#ctest --build-and-test ../packs/$name/ . --build-generator Ninja
-#	Ninja Multi-Config
-#	Visual Studio 18 2026
-#ctest --output-on-failure #-C Debug
-#if ($LASTEXITCODE -ne 0) {
-#	cat compile_result.txt
-#}
-#tree
 return $LASTEXITCODE
 

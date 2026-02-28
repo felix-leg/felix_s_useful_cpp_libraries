@@ -62,8 +62,6 @@ jobs:
     defaults:
       run:
         shell: powershell
-#    env:
-#      BOOST_ROOT: ${{ github.workspace }}\boost
     steps:
       - name: Checkout
         uses: actions/checkout@v5
@@ -71,25 +69,21 @@ jobs:
         uses: conan-io/setup-conan@v1
         with:
           cache_packages: true
-#      - name: Install Boost
-#        run: choco install boost-msvc-14.3
-#      - name: Setup cmake
-#        uses: jwlawson/actions-setup-cmake@v2
       - name: Text module
         run: powershell.exe -file .github\jobs\module-test.ps1 -name text
-#      - name: CPU module
-#        run: powershell.exe -file .github\jobs\module-test.ps1 -name cpu
-#      - name: Binary module
-#        run: powershell.exe -file .github\jobs\module-test.ps1 -name binary
-#      - name: Geometry module
-#        run: powershell.exe -file .github\jobs\module-test.ps1 -name geometry
-#      - name: Files module
-#        run: powershell.exe -file .github\jobs\module-test.ps1 -name files
-#      - name: Math module
-#        run: powershell.exe -file .github\jobs\module-test.ps1 -name math_utils
-#      - name: Misc module
-#        run: powershell.exe -file .github\jobs\module-test.ps1 -name misc
-#      - name: System module
-#        run: powershell.exe -file .github\jobs\module-test.ps1 -name system
+      - name: CPU module
+        run: powershell.exe -file .github\jobs\module-test.ps1 -name cpu
+      - name: Binary module
+        run: powershell.exe -file .github\jobs\module-test.ps1 -name binary
+      - name: Geometry module
+        run: powershell.exe -file .github\jobs\module-test.ps1 -name geometry
+      - name: Files module
+        run: powershell.exe -file .github\jobs\module-test.ps1 -name files
+      - name: Math module
+        run: powershell.exe -file .github\jobs\module-test.ps1 -name math_utils
+      - name: Misc module
+        run: powershell.exe -file .github\jobs\module-test.ps1 -name misc
+      - name: System module
+        run: powershell.exe -file .github\jobs\module-test.ps1 -name system
 #      - name: Primitives module
 #        run: powershell.exe -file .github\jobs\module-test.ps1 -name primitives
