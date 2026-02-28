@@ -36,8 +36,8 @@ include("../common.cmake")
 find_package(Boost 1.83 COMPONENTS unit_test_framework REQUIRED)
 enable_testing()
 
-message(STATUS "Boost_LIBRARIES: ${Boost_LIBRARIES}")
-message(STATUS "Boost_INCLUDE_DIRS: ${Boost_INCLUDE_DIRS}")
+#message(STATUS "Boost_LIBRARIES: ${Boost_LIBRARIES}")
+#message(STATUS "Boost_INCLUDE_DIRS: ${Boost_INCLUDE_DIRS}")
 
 #the library
 add_library(tested_lib
@@ -66,9 +66,9 @@ set_target_env_options(tested_lib)
 
 #the test
 add_executable(the_test "test/text_utils_test.cpp")
-#target_link_libraries(the_test PRIVATE tested_lib Boost::unit_test_framework)# ${Boost_LIBRARIES})
-target_link_libraries(the_test PRIVATE tested_lib ${Boost_LIBRARIES})
-target_include_directories(the_test PRIVATE ${Boost_INCLUDE_DIRS})
+target_link_libraries(the_test PRIVATE tested_lib Boost::unit_test_framework)# ${Boost_LIBRARIES})
+#target_link_libraries(the_test PRIVATE tested_lib ${Boost_LIBRARIES})
+#target_include_directories(the_test PRIVATE ${Boost_INCLUDE_DIRS})
 set_target_env_options(the_test)
 
 register_test("test" "the_test")

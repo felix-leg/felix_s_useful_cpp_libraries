@@ -24,9 +24,9 @@
 #For more information, please refer to <https://unlicense.org>
 #
 
-if(CMAKE_HOST_WIN32)
-	list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/../../cmake")
-endif()
+#if(CMAKE_HOST_WIN32)
+#	list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/../../cmake")
+#endif()
 
 set(HOST_DEF "")
 set(HOST_ARCH "")
@@ -79,18 +79,18 @@ endfunction()
 function(register_test Name Cmd)
 	set(Cfg "")
 	set(Prefix "")
-	if(CMAKE_HOST_WIN32)
-		set(Cfg "--config Debug")
-		set(Prefix "Debug\\")
-	endif()
+#	if(CMAKE_HOST_WIN32)
+#		set(Cfg "--config Debug")
+#		set(Prefix "Debug\\")
+#	endif()
 	add_test(NAME "main_${Name}" COMMAND "${Prefix}${Cmd}")
-	add_test(NAME "build_${Name}"
-		COMMAND
-			"${CMAKE_COMMAND}"
-			--build "${CMAKE_BINARY_DIR}"
-			--target "${Cmd}"
-			${Cfg}
-	)
-	set_tests_properties("main_${Name}" PROPERTIES DEPENDS "build_${Name}" )
+#	add_test(NAME "build_${Name}"
+#		COMMAND
+#			"${CMAKE_COMMAND}"
+#			--build "${CMAKE_BINARY_DIR}"
+#			--target "${Cmd}"
+#			${Cfg}
+#	)
+#	set_tests_properties("main_${Name}" PROPERTIES DEPENDS "build_${Name}" )
 endfunction()
 

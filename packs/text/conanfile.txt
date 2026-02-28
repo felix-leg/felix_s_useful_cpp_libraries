@@ -1,0 +1,13 @@
+[generators]
+CMakeDeps
+CMakeToolchain
+
+[layout]
+cmake_layout
+
+[requires]
+boost/1.90.0
+
+[options]
+boost/*:shared=True
+boost/*:without_cobalt=True

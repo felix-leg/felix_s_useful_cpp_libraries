@@ -25,14 +25,25 @@
 #
 param([string]$name='')
 
-New-Item build-$name -ItemType Directory -ea 0
-cd build-$name
+#New-Item build-$name -ItemType Directory -ea 0
+#cd build-$name
 
-cmake -DCMAKE_BUILD_TYPE=Debug -DBUILD_WITH_CI=1 -S ../packs/$name/
-ctest -C Debug --output-on-failure
+cd ../packs/$name
+
+conan install . --build=missing -s build_type=Debug
+cmake --preset conan-debug -G Ninja
+ctest --build-and-test . build/Debug --build-generator Ninja
+cd build/Debug
+ctest --output-on-failure
+
+#cmake -DCMAKE_BUILD_TYPE=Debug -S ../packs/$name/
+#ctest --build-and-test ../packs/$name/ . --build-generator Ninja
+#	Ninja Multi-Config
+#	Visual Studio 18 2026
+#ctest --output-on-failure #-C Debug
 #if ($LASTEXITCODE -ne 0) {
 #	cat compile_result.txt
 #}
-tree
-#return $LASTEXITCODE
+#tree
+return $LASTEXITCODE
 

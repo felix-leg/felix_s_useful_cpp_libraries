@@ -62,15 +62,19 @@ jobs:
     defaults:
       run:
         shell: powershell
-    env:
-      BOOST_ROOT: ${{ github.workspace }}\boost
+#    env:
+#      BOOST_ROOT: ${{ github.workspace }}\boost
     steps:
       - name: Checkout
         uses: actions/checkout@v5
-      - name: Install Boost
-        run: choco install boost-msvc-14.3
-      - name: Setup cmake
-        uses: jwlawson/actions-setup-cmake@v2
+      - name: Setup conan
+        uses: conan-setup-action@v1.0.0
+        with:
+          version: latest
+#      - name: Install Boost
+#        run: choco install boost-msvc-14.3
+#      - name: Setup cmake
+#        uses: jwlawson/actions-setup-cmake@v2
       - name: Text module
         run: powershell.exe -file .github\jobs\module-test.ps1 -name text
 #      - name: CPU module
