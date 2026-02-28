@@ -78,19 +78,19 @@ endfunction()
 
 function(register_test Name Cmd)
 	set(Cfg "")
-	set(Prefix "")
-#	if(CMAKE_HOST_WIN32)
-#		set(Cfg "--config Debug")
+#	set(Prefix "")
+	if(CMAKE_HOST_WIN32)
+		set(Cfg "--config Debug")
 #		set(Prefix "Debug\\")
-#	endif()
-	add_test(NAME "main_${Name}" COMMAND "${Prefix}${Cmd}")
-#	add_test(NAME "build_${Name}"
-#		COMMAND
-#			"${CMAKE_COMMAND}"
-#			--build "${CMAKE_BINARY_DIR}"
-#			--target "${Cmd}"
-#			${Cfg}
-#	)
-#	set_tests_properties("main_${Name}" PROPERTIES DEPENDS "build_${Name}" )
+	endif()
+	add_test(NAME "main_${Name}" COMMAND "${Cmd}")
+	add_test(NAME "build_${Name}"
+		COMMAND
+			"${CMAKE_COMMAND}"
+			--build "${CMAKE_BINARY_DIR}"
+			--target "${Cmd}"
+			${Cfg}
+	)
+	set_tests_properties("main_${Name}" PROPERTIES DEPENDS "build_${Name}" )
 endfunction()
 

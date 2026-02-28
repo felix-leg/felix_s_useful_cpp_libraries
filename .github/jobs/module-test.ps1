@@ -31,9 +31,9 @@ param([string]$name='')
 cd packs/$name
 
 conan install . --build=missing -s build_type=Debug
-ls
+
 cmake --preset conan-default -G "Visual Studio 17 2022" #-G Ninja
-ctest --build-and-test . build/Debug --build-generator "Visual Studio 17 2022" #Ninja
+#ctest --build-and-test . build/Debug --build-generator "Visual Studio 17 2022" #Ninja
 cd build/Debug
 ctest --output-on-failure
 
