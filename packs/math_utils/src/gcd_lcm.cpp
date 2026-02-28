@@ -60,9 +60,11 @@ namespace math {
 		GCD_Calculator::GCD_Calculator(uint64_t& ret_val) noexcept {
 			return_type = U64; return_ptr.u64 = &ret_val;
 		}
+		#ifndef APP_SYSTEM_IS_MSWIN
 		GCD_Calculator::GCD_Calculator(unsigned long long& ret_val) noexcept {
 			return_type = ULL; return_ptr.uLL = &ret_val;
 		}
+		#endif
 		
 		void GCD_Calculator::return_value(unsigned long long val) noexcept {
 			switch( return_type ) {
@@ -90,9 +92,11 @@ namespace math {
 				case U64:
 					*(return_ptr.u64) = static_cast<uint64_t>(val);
 					break;
+				#ifndef APP_SYSTEM_IS_MSWIN
 				case ULL:
 					*(return_ptr.uLL) = val;
 					break;
+				#endif
 			}
 		}
 		
@@ -152,11 +156,13 @@ namespace math {
 			values.push_front(static_cast<unsigned long long>(val));
 			++values_num;
 		}
+		#ifndef APP_SYSTEM_IS_MSWIN
 		void GCD_Calculator::add(unsigned long long val) noexcept {
 			if( val == 0 ) return;
 			values.push_front(val);
 			++values_num;
 		}
+		#endif
 		
 		void GCD_Calculator::compute() noexcept {
 			if( values.empty() ) {

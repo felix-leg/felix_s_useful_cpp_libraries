@@ -55,7 +55,9 @@ namespace math {
 				int16_t *i16; uint16_t *u16;
 				int32_t *i32; uint32_t *u32;
 				int64_t *i64; uint64_t *u64;
+				#ifndef APP_SYSTEM_IS_MSWIN
 				unsigned long long *uLL;
+				#endif
 			} return_ptr;
 			void return_value(unsigned long long val) noexcept;
 		public:
@@ -63,13 +65,17 @@ namespace math {
 			GCD_Calculator(int16_t& ret_val) noexcept; GCD_Calculator(uint16_t& ret_val) noexcept;
 			GCD_Calculator(int32_t& ret_val) noexcept; GCD_Calculator(uint32_t& ret_val) noexcept;
 			GCD_Calculator(int64_t& ret_val) noexcept; GCD_Calculator(uint64_t& ret_val) noexcept;
+			#ifndef APP_SYSTEM_IS_MSWIN
 			GCD_Calculator(unsigned long long& ret_val) noexcept;
+			#endif
 			
 			void add(int8_t val) noexcept; void add(uint8_t val) noexcept;
 			void add(int16_t val) noexcept; void add(uint16_t val) noexcept;
 			void add(int32_t val) noexcept; void add(uint32_t val) noexcept;
 			void add(int64_t val) noexcept; void add(uint64_t val) noexcept;
+			#ifndef APP_SYSTEM_IS_MSWIN
 			void add(unsigned long long val) noexcept;
+			#endif
 			
 			void compute() noexcept;
 		};//! class GCD_Calculator
