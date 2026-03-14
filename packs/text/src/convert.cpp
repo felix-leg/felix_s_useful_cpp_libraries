@@ -249,7 +249,7 @@ namespace txt {
 		if( required_size > 0 ) {
 			std::wstring result{static_cast<size_t>(required_size), L'\0', std::wstring::allocator_type{}};
 			int status = MultiByteToWideChar(
-				CP_UTF8, kFlags, from.data(), static_cast<int>(from.size()),
+				CP_UTF8, kFlags, from.data(), from_size,
 				result.data(), required_size
 			);
 			if( status == 0 ) { //error
