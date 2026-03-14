@@ -59,6 +59,31 @@ jobs:
         run: ./.github/jobs/module-test.sh primitives
       - name: System module
         run: ./.github/jobs/module-test.sh system
+  Compile-Test-MacOs:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+      - name: Install Boost
+        run: brew install boost
+      - name: Text module
+        run: ./.github/jobs/module-test.sh text
+      - name: CPU module
+        run: ./.github/jobs/module-test.sh cpu
+      - name: Binary module
+        run: ./.github/jobs/module-test.sh binary
+      - name: Geometry module
+        run: ./.github/jobs/module-test.sh geometry
+      - name: Files module
+        run: ./.github/jobs/module-test.sh files
+      - name: Math module
+        run: ./.github/jobs/module-test.sh math_utils
+      - name: Misc module
+        run: ./.github/jobs/module-test.sh misc
+      - name: Primitives module
+        run: ./.github/jobs/module-test.sh primitives
+      - name: System module
+        run: ./.github/jobs/module-test.sh system
   Compile-Test-Windows:
     runs-on: windows-latest
     defaults:
