@@ -66,7 +66,7 @@ namespace utf8 {
 		std::string result{};
 		result.reserve(from_string.size() * 4);
 		ForwardUTF8Iterator it{from_string};
-		UTF8Sentiel end_it{};
+		UTF8Sentinel end_it{};
 		using namespace txt::database;
 		for(; it != end_it; ++it) {
 			if( upper_map.contains( *it ) ) {
@@ -86,7 +86,7 @@ namespace utf8 {
 		std::string result{};
 		result.reserve(from_string.size() * 4);
 		ForwardUTF8Iterator it{from_string};
-		UTF8Sentiel end_it{};
+		UTF8Sentinel end_it{};
 		using namespace txt::database;
 		for(; it != end_it; ++it) {
 			if( lower_map.contains( *it ) ) {
@@ -106,7 +106,7 @@ namespace utf8 {
 		std::string result{};
 		result.reserve(from_string.size() * 4);
 		ForwardUTF8Iterator it{from_string};
-		UTF8Sentiel end_it{};
+		UTF8Sentinel end_it{};
 		using namespace txt::database;
 		for(; it != end_it; ++it) {
 			if( title_map.contains( *it ) ) {

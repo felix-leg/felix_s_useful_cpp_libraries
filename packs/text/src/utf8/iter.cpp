@@ -119,7 +119,7 @@ ForwardUTF8Iterator::ForwardUTF8Iterator(const std::string_view& s) noexcept :
 		return c_ptr != other.c_ptr;
 	}
 	
-	bool ForwardUTF8Iterator::operator!=(const UTF8Sentiel&) const noexcept {
+	bool ForwardUTF8Iterator::operator!=(const UTF8Sentinel&) const noexcept {
 		return (*c_ptr != 0) && (c_ptr < c_last);
 	}
 	
@@ -167,7 +167,7 @@ BackwardUTF8Iterator::BackwardUTF8Iterator(const std::string_view& s) noexcept :
 		return c_ptr != other.c_ptr;
 	}
 	
-	bool BackwardUTF8Iterator::operator!=(const UTF8Sentiel&) const noexcept {
+	bool BackwardUTF8Iterator::operator!=(const UTF8Sentinel&) const noexcept {
 		return (c_ptr >= c_first);
 	}
 	

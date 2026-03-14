@@ -34,7 +34,7 @@ namespace utf8 {
 	
 	std::string_view ltrim(std::string_view text) noexcept {
 		ForwardUTF8Iterator it{text};
-		UTF8Sentiel end_it{};
+		UTF8Sentinel end_it{};
 		for(; it != end_it; ++it) {
 			if( ! utf8::is_space(it.position()) ) {
 				return std::string_view(it.position(), text.data() + text.size());
@@ -45,7 +45,7 @@ namespace utf8 {
 	
 	std::string_view rtrim(std::string_view text) noexcept {
 		BackwardUTF8Iterator it{text};
-		UTF8Sentiel end_it{};
+		UTF8Sentinel end_it{};
 		const char* before = nullptr;
 		for(; it != end_it; ++it) {
 			if( ! utf8::is_space(it.position()) ) {
@@ -59,9 +59,9 @@ namespace utf8 {
 	
 	std::string_view trim(std::string_view text) noexcept {
 		ForwardUTF8Iterator fit{text};
-		UTF8Sentiel end_fit{};
+		UTF8Sentinel end_fit{};
 		BackwardUTF8Iterator bit{text};
-		UTF8Sentiel end_bit{};
+		UTF8Sentinel end_bit{};
 		
 		const char* view_begin = nullptr;
 		const char* view_end = nullptr;

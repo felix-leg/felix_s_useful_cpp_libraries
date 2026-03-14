@@ -55,7 +55,7 @@ namespace utf8 {
 	/// Write character `c` into a 5 element table `out` encoded in UTF-8
 	void write_utf8(char32_t c, char* out) noexcept;
 	
-	using UTF8Sentiel = std:: default_sentinel_t;
+	using UTF8Sentinel = std:: default_sentinel_t;
 	
 	class ForwardUTF8Iterator {
 	private:
@@ -74,7 +74,7 @@ namespace utf8 {
 		const char* position() const noexcept;
 		bool operator==(const ForwardUTF8Iterator& other) const noexcept; // i == j
 		bool operator!=(const ForwardUTF8Iterator& other) const noexcept; // i != j
-		bool operator!=(const UTF8Sentiel&) const noexcept;
+		bool operator!=(const UTF8Sentinel&) const noexcept;
 		
 		ForwardUTF8Iterator& operator++() noexcept; // ++it
 		ForwardUTF8Iterator operator++(int) noexcept; // it++
@@ -98,7 +98,7 @@ namespace utf8 {
 		const char* position() const noexcept;
 		bool operator==(const BackwardUTF8Iterator& other) const noexcept; // i == j
 		bool operator!=(const BackwardUTF8Iterator& other) const noexcept; // i != j
-		bool operator!=(const UTF8Sentiel&) const noexcept;
+		bool operator!=(const UTF8Sentinel&) const noexcept;
 		
 		BackwardUTF8Iterator& operator++() noexcept; // ++it
 		BackwardUTF8Iterator operator++(int) noexcept; // it++
