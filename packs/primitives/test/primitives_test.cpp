@@ -84,7 +84,7 @@ BOOST_AUTO_TEST_CASE( clamped_add ) {
 	
 	#undef TT
 }
-
+//*
 BOOST_AUTO_TEST_CASE( clamped_sub ) {
 	#define TT(un,si) \
 	BOOST_TEST_REQUIRE( un::sub_clamped(2, 3) == 0 ); \
@@ -99,7 +99,7 @@ BOOST_AUTO_TEST_CASE( clamped_sub ) {
 	
 	#undef TT
 }
-
+//*/
 BOOST_AUTO_TEST_CASE( i_to_binary_string ) {
 	BOOST_TEST_REQUIRE( UByte::to_bin(7) == "111" );
 	BOOST_TEST_REQUIRE( UByte::to_bin(7, true) == "00000111" );

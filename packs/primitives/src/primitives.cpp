@@ -36,8 +36,10 @@ For more information, please refer to <https://unlicense.org>
 #include <utility>
 
 #if __has_include(<stdckdint.h>)
-	#define HAS_CKDINT
-	#include <stdckdint.h>
+	#if __cplusplus > 202302L
+		#define HAS_CKDINT
+		#include <stdckdint.h>
+	#endif
 #else
 	#warning Checked aritmetic operations are not available on your system
 #endif
@@ -109,7 +111,28 @@ signed long long LongLong::abs(signed long long x) {
 	}
 #else
 	#define THE_FN(type, ns, is_unsigned) type ns::add_wrapped(type a, type b) noexcept { \
-		return a + b; \
+		bool overflow; \
+		if constexpr ( is_unsigned ) { \
+			overflow = false; \
+			if( ~a < b ) { \
+				overflow = true; \
+			} else { \
+				overflow = ((a + b) < a); \
+			} \
+		} else { \
+			overflow = true; \
+			if( (a ^ b) < 0 ) { \
+				overflow = false; \
+			} else { \
+				overflow = ((a ^ static_cast<type>(a + b)) < 0); \
+			} \
+		} \
+		if( !overflow ) { \
+			return a + b; \
+		} else { \
+			b -= ns::max_value - a; \
+			return ns::min_value + b - 1; \
+		} \
 	}
 #endif
 
@@ -124,7 +147,28 @@ THE_SET()
 	}
 #else
 	#define THE_FN(type, ns, is_unsigned) type ns::sub_wrapped(type a, type b) noexcept { \
-		return a - b; \
+		bool underflow; \
+		if constexpr ( is_unsigned ) { \
+			underflow = false; \
+			if( ~a < b ) { \
+				underflow = true; \
+			} else { \
+				underflow = (static_cast<type>(a - b) > a); \
+			} \
+		} else { \
+			underflow = true; \
+			if( (a ^ b) > 0 ) { \
+				underflow = false; \
+			} else { \
+				underflow = ((a ^ static_cast<type>(a - b)) < 0); \
+			} \
+		} \
+		if( !underflow ) { \
+			return a - b; \
+		} else { \
+			b -= a - ns::min_value; \
+			return ns::max_value - b + 1; \
+		} \
 	}
 #endif
 
@@ -150,6 +194,33 @@ THE_SET()
 	}
 #else
 	#define THE_FN(type, ns, is_unsigned) type ns::add_clamped(type a, type b) noexcept { \
+		bool overflow; \
+		if constexpr ( is_unsigned ) { \
+			overflow = false; \
+			if( ~a < b ) { \
+				overflow = true; \
+			} else { \
+				overflow = ((a + b) < a); \
+			} \
+		} else { \
+			overflow = true; \
+			if( (a ^ b) < 0 ) { \
+				overflow = false; \
+			} else { \
+				overflow = ((a ^ static_cast<type>(a + b)) < 0); \
+			} \
+		} \
+		if( overflow ) { \
+			if constexpr ( is_unsigned ) { \
+				return ns::max_value; \
+			} else { \
+				if( a < 0 && b < 0 ) { \
+					return ns::min_value; \
+				} else { \
+					return ns::max_value; \
+				} \
+			} \
+		} \
 		return a + b; \
 	}
 #endif
@@ -176,6 +247,33 @@ THE_SET()
 	}
 #else
 	#define THE_FN(type, ns, is_unsigned) type ns::sub_clamped(type a, type b) noexcept { \
+		bool underflow; \
+		if constexpr ( is_unsigned ) { \
+			underflow = false; \
+			if( ~a < b ) { \
+				underflow = true; \
+			} else { \
+				underflow = (static_cast<type>(a - b) > a); \
+			} \
+		} else { \
+			underflow = true; \
+			if( (a ^ b) > 0 ) { \
+				underflow = false; \
+			} else { \
+				underflow = ((a ^ static_cast<type>(a - b)) < 0); \
+			} \
+		} \
+		if( underflow ) { \
+			if constexpr ( is_unsigned ) { \
+				return 0; \
+			} else { \
+				if( a < 0 && b > 0 ) { \
+					return ns::min_value; \
+				} else { \
+					return ns::max_value; \
+				} \
+			} \
+		} \
 		return a - b; \
 	}
 #endif

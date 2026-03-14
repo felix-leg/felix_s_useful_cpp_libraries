@@ -55,8 +55,8 @@ jobs:
         run: ./.github/jobs/module-test.sh math_utils
       - name: Misc module
         run: ./.github/jobs/module-test.sh misc
-      #- name: Primitives module
-      #  run: ./.github/jobs/module-test.sh primitives
+      - name: Primitives module
+        run: ./.github/jobs/module-test.sh primitives
       - name: System module
         run: ./.github/jobs/module-test.sh system
   Compile-Test-Windows:
@@ -87,5 +87,5 @@ jobs:
         run: powershell.exe -file .github\jobs\module-test.ps1 -name misc
       - name: System module
         run: powershell.exe -file .github\jobs\module-test.ps1 -name system
-#      - name: Primitives module
-#        run: powershell.exe -file .github\jobs\module-test.ps1 -name primitives
+      - name: Primitives module
+        run: powershell.exe -file .github\jobs\module-test.ps1 -name primitives
