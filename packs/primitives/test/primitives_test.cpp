@@ -129,9 +129,17 @@ BOOST_AUTO_TEST_CASE( i_to_binary_string ) {
 	BOOST_TEST_REQUIRE( ULong::to_bin(7, true) == "0000000000000000000000000000000000000000000000000000000000000111" );
 	#endif
 	BOOST_TEST_REQUIRE( Long::to_bin(7) == "111" );
+	#ifdef APP_COMPILER_IS_MSVC
+	BOOST_TEST_REQUIRE( Long::to_bin(7, true) == "00000000000000000000000000000111" );
+	#else
 	BOOST_TEST_REQUIRE( Long::to_bin(7, true) == "0000000000000000000000000000000000000000000000000000000000000111" );
+	#endif
 	BOOST_TEST_REQUIRE( Long::to_bin(-7) == "-111" );
+	#ifdef APP_COMPILER_IS_MSVC
+	BOOST_TEST_REQUIRE( Long::to_bin(-7, true) == "-00000000000000000000000000000111" );
+	#else
 	BOOST_TEST_REQUIRE( Long::to_bin(-7, true) == "-0000000000000000000000000000000000000000000000000000000000000111" );
+	#endif
 	
 	if constexpr( sizeof(long long) == 16 ) {
 	BOOST_TEST_REQUIRE( ULongLong::to_bin(7) == "111" );
@@ -224,9 +232,17 @@ BOOST_AUTO_TEST_CASE( i_to_hex_string ) {
 	BOOST_TEST_REQUIRE( ULong::to_hex(0x5f, true) == "000000000000005f" );
 	#endif
 	BOOST_TEST_REQUIRE( Long::to_hex(0x2f) == "2f" );
+	#ifdef APP_COMPILER_IS_MSVC
+	BOOST_TEST_REQUIRE( Long::to_hex(0x2f, true) == "0000002f" );
+	#else
 	BOOST_TEST_REQUIRE( Long::to_hex(0x2f, true) == "000000000000002f" );
+	#endif
 	BOOST_TEST_REQUIRE( Long::to_hex(-0x2f) == "-2f" );
+	#ifdef APP_COMPILER_IS_MSVC
+	BOOST_TEST_REQUIRE( Long::to_hex(-0x2f, true) == "-0000002f" );
+	#else
 	BOOST_TEST_REQUIRE( Long::to_hex(-0x2f, true) == "-000000000000002f" );
+	#endif
 	
 	if constexpr( sizeof(long long) == 16 ) {
 	BOOST_TEST_REQUIRE( ULongLong::to_hex(0x5f) == "5f" );
