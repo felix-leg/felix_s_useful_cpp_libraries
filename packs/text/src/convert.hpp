@@ -35,9 +35,13 @@ namespace txt {
 	
 	[[nodiscard]] std::string utf32_to_utf8(const std::u32string& from) noexcept;
 	[[nodiscard]] std::u32string utf8_to_utf32(const std::string& from) noexcept;
+	[[nodiscard]] std::string utf16_to_utf8(const std::u16string& from) noexcept;
+	[[nodiscard]] std::u16string utf8_to_utf16(const std::string& from) noexcept;
 	
 	[[nodiscard]] std::string utf32_to_utf8(const std::u32string_view& from) noexcept;
+	[[nodiscard]] std::u16string utf8_to_utf16(const std::string_view& from) noexcept;
 	[[nodiscard]] std::u32string utf8_to_utf32(const std::string_view& from) noexcept;
+	[[nodiscard]] std::string utf16_to_utf8(const std::u16string_view& from) noexcept;
 	
 	#ifdef APP_SYSTEM_IS_MSWIN
 	[[nodiscard]] std::wstring utf8_to_mswin(const std::string& from) noexcept;

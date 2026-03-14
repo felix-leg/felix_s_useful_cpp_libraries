@@ -35,6 +35,7 @@ For more information, please refer to <https://unlicense.org>
 #	include <iconv.h>
 #	include <bit>
 constexpr const char* UTF_32_TYPE = (std::endian::native == std::endian::big) ? "UTF-32BE" : "UTF-32LE";
+constexpr const char* UTF_16_TYPE = (std::endian::native == std::endian::big) ? "UTF-16BE" : "UTF-16LE";
 #	define ICONV_ERR reinterpret_cast<iconv_t>(-1)
 #	define USING_ICONV
 #endif
@@ -53,6 +54,7 @@ namespace txt {
 	
 	#define SIZE_T_ERR static_cast<size_t>(-1)
 	#define SIZE_T_ERR_2 static_cast<size_t>(-2)
+	#define SIZE_T_ERR_3 static_cast<size_t>(-3)
 	#define SIZE_T_ZERO static_cast<size_t>(0)
 	
 	std::string utf32_to_utf8(const std::u32string& from) noexcept {
@@ -139,6 +141,92 @@ namespace txt {
 		return result;
 	}
 	
+	std::string utf16_to_utf8(const std::u16string& from) noexcept {
+		#ifdef USING_ICONV
+		iconv_t i_state;
+		i_state = iconv_open("UTF-8", UTF_16_TYPE);
+		if( i_state != ICONV_ERR ) {
+			auto in_buf = const_cast<char*>(reinterpret_cast<const char*>(from.c_str()));
+			size_t in_avail = from.length() * sizeof(char16_t);
+			std::string out_str{in_avail+1, '\0', std::string::allocator_type{}};
+			auto out_str_size = in_avail;
+			auto out_buf = out_str.data();
+			size_t out_avail = in_avail;
+			
+			size_t i_result = iconv(i_state, &in_buf, &in_avail, &out_buf, &out_avail);
+			if( i_result != SIZE_T_ERR ) {
+				out_str.resize(out_str_size - out_avail);
+				iconv_close(i_state);
+				return out_str;
+			}
+			//error
+			iconv_close(i_state);
+		}
+		#endif
+		std::string old_locale {std::setlocale(LC_CTYPE, nullptr)};
+		std::setlocale(LC_CTYPE, "en_US.utf8");
+		
+		std::string result{};
+		char out[MB_LEN_MAX+1] = {0};
+		std::mbstate_t state{};
+		
+		for(char16_t c : from) {
+			size_t rc = std::c16rtomb(out, c, &state);
+			if( rc != SIZE_T_ERR && rc != SIZE_T_ZERO ) {
+				result += std::string(out, rc);
+			}
+		}
+		
+		std::setlocale(LC_CTYPE, old_locale.c_str());
+		return result;
+	}
+	
+	std::u16string utf8_to_utf16(const std::string& from) noexcept {
+		#ifdef USING_ICONV
+		iconv_t i_state;
+		i_state = iconv_open(UTF_16_TYPE, "UTF-8");
+		if( i_state != ICONV_ERR ) {
+			auto in_buf = const_cast<char*>(from.data());
+			size_t in_avail = from.length() + 1;
+			std::u16string out_str{in_avail, u'\0', std::u16string::allocator_type{}};
+			auto out_str_size = in_avail-1;
+			auto out_buf = reinterpret_cast<char*>(out_str.data());
+			size_t out_avail = in_avail * sizeof(char16_t);
+			
+			size_t i_result = iconv(i_state, &in_buf, &in_avail, &out_buf, &out_avail);
+			if( i_result != SIZE_T_ERR ) {
+				out_str.resize(out_str_size - (out_avail / sizeof(char16_t)));
+				iconv_close(i_state);
+				return out_str;
+			}
+			//error
+			iconv_close(i_state);
+		}
+		#endif
+		std::string old_locale {std::setlocale(LC_CTYPE, nullptr)};
+		std::setlocale(LC_CTYPE, "en_US.utf8");
+		
+		std::u16string result{};
+		char16_t new_char;
+		std::mbstate_t state{};
+		
+		const char * ptr = from.c_str();
+		const char * end = from.c_str() + from.size() + 1;
+		while( size_t rc = std::mbrtoc16(&new_char, ptr, end - ptr, &state) ) { // rc != 0
+			if( rc == SIZE_T_ERR || rc == SIZE_T_ERR_2 ) {
+				break;
+			}
+			
+			result += new_char;
+			if( rc != SIZE_T_ERR_3 ) {
+				ptr += rc;
+			}
+		}
+		
+		std::setlocale(LC_CTYPE, old_locale.c_str());
+		return result;
+	}
+	
 	std::string utf32_to_utf8(const std::u32string_view& from) noexcept {
 		#ifdef USING_ICONV
 		iconv_t i_state;
@@ -172,6 +260,52 @@ namespace txt {
 			size_t rc = std::c32rtomb(out, c, &state);
 			if( rc != SIZE_T_ERR && rc != SIZE_T_ZERO ) {
 				result += std::string(out, rc);
+			}
+		}
+		
+		std::setlocale(LC_CTYPE, old_locale.c_str());
+		return result;
+	}
+	
+	std::u16string utf8_to_utf16(const std::string_view& from) noexcept {
+		#ifdef USING_ICONV
+		iconv_t i_state;
+		i_state = iconv_open(UTF_16_TYPE, "UTF-8");
+		if( i_state != ICONV_ERR ) {
+			auto in_buf = const_cast<char*>(from.data());
+			size_t in_avail = from.length() + 1;
+			std::u16string out_str{in_avail, u'\0', std::u16string::allocator_type{}};
+			auto out_str_size = in_avail-1;
+			auto out_buf = reinterpret_cast<char*>(out_str.data());
+			size_t out_avail = in_avail * sizeof(char16_t);
+			
+			size_t i_result = iconv(i_state, &in_buf, &in_avail, &out_buf, &out_avail);
+			if( i_result != SIZE_T_ERR ) {
+				out_str.resize(out_str_size - (out_avail / sizeof(char16_t)));
+				iconv_close(i_state);
+				return out_str;
+			}
+			//error
+			iconv_close(i_state);
+		}
+		#endif
+		std::string old_locale {std::setlocale(LC_CTYPE, nullptr)};
+		std::setlocale(LC_CTYPE, "en_US.utf8");
+		
+		std::u16string result{};
+		char16_t new_char;
+		std::mbstate_t state{};
+		
+		const char * ptr = from.data();
+		const char * end = from.data() + from.size() + 1;
+		while( size_t rc = std::mbrtoc16(&new_char, ptr, end - ptr, &state) ) { // rc != 0
+			if( rc == SIZE_T_ERR || rc == SIZE_T_ERR_2 ) {
+				break;
+			}
+			
+			result += new_char;
+			if( rc != SIZE_T_ERR_3 ) {
+				ptr += rc;
 			}
 		}
 		
@@ -217,6 +351,46 @@ namespace txt {
 			
 			result += new_char;
 			ptr += rc;
+		}
+		
+		std::setlocale(LC_CTYPE, old_locale.c_str());
+		return result;
+	}
+	
+	std::string utf16_to_utf8(const std::u16string_view& from) noexcept {
+		#ifdef USING_ICONV
+		iconv_t i_state;
+		i_state = iconv_open("UTF-8", UTF_16_TYPE);
+		if( i_state != ICONV_ERR ) {
+			auto in_buf = const_cast<char*>(reinterpret_cast<const char*>(from.data()));
+			size_t in_avail = from.length() * sizeof(char16_t);
+			std::string out_str{in_avail+1, '\0', std::string::allocator_type{}};
+			auto out_str_size = in_avail;
+			auto out_buf = out_str.data();
+			size_t out_avail = in_avail;
+			
+			size_t i_result = iconv(i_state, &in_buf, &in_avail, &out_buf, &out_avail);
+			if( i_result != SIZE_T_ERR ) {
+				out_str.resize(out_str_size - out_avail);
+				iconv_close(i_state);
+				return out_str;
+			}
+			//error
+			iconv_close(i_state);
+		}
+		#endif
+		std::string old_locale {std::setlocale(LC_CTYPE, nullptr)};
+		std::setlocale(LC_CTYPE, "en_US.utf8");
+		
+		std::string result{};
+		char out[MB_LEN_MAX+1] = {0};
+		std::mbstate_t state{};
+		
+		for(char16_t c : from) {
+			size_t rc = std::c16rtomb(out, c, &state);
+			if( rc != SIZE_T_ERR && rc != SIZE_T_ZERO ) {
+				result += std::string(out, rc);
+			}
 		}
 		
 		std::setlocale(LC_CTYPE, old_locale.c_str());

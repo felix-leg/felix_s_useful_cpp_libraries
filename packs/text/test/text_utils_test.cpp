@@ -104,6 +104,30 @@ BOOST_AUTO_TEST_CASE( ascii_to_upper_string ) {
 	BOOST_TEST_REQUIRE( (result == dest) );
 }
 
+BOOST_AUTO_TEST_CASE( convert_utf8_to_utf16 ) {
+	std::string source = "z\u00df\u6c34\U0001F34C";
+	
+	std::u16string dest = txt::utf8_to_utf16(source);
+	BOOST_TEST_REQUIRE( dest.size() == 5 );
+	BOOST_TEST_REQUIRE( (dest[0] == 0x007A ) );
+	BOOST_TEST_REQUIRE( (dest[1] == 0x00DF ) );
+	BOOST_TEST_REQUIRE( (dest[2] == 0x6C34 ) );
+	BOOST_TEST_REQUIRE( (dest[3] == 0xD83C ) );
+	BOOST_TEST_REQUIRE( (dest[4] == 0xDF4C ) );
+}
+
+BOOST_AUTO_TEST_CASE( convert_utf8_to_utf16_sv ) {
+	std::string source = "z\u00df\u6c34\U0001F34C";
+	
+	std::u16string dest = txt::utf8_to_utf16(static_cast<std::string_view>(source));
+	BOOST_TEST_REQUIRE( dest.size() == 5 );
+	BOOST_TEST_REQUIRE( (dest[0] == 0x007A ) );
+	BOOST_TEST_REQUIRE( (dest[1] == 0x00DF ) );
+	BOOST_TEST_REQUIRE( (dest[2] == 0x6C34 ) );
+	BOOST_TEST_REQUIRE( (dest[3] == 0xD83C ) );
+	BOOST_TEST_REQUIRE( (dest[4] == 0xDF4C ) );
+}
+
 BOOST_AUTO_TEST_CASE( convert_utf8_to_utf32 ) {
 	std::string source = "z\u00df\u6c34\U0001F34C";
 	
@@ -130,6 +154,40 @@ BOOST_AUTO_TEST_CASE( convert_utf32_to_utf8 ) {
 	std::u32string source = U"z\u00df\u6c34\U0001F34C";
 	
 	std::string dest = txt::utf32_to_utf8(source);
+	BOOST_TEST_REQUIRE( dest.size() == 10 );
+	BOOST_TEST_REQUIRE( (dest[0] == (char)0x7a) );
+	BOOST_TEST_REQUIRE( (dest[1] == (char)0xc3) );
+	BOOST_TEST_REQUIRE( (dest[2] == (char)0x9f) );
+	BOOST_TEST_REQUIRE( (dest[3] == (char)0xe6) );
+	BOOST_TEST_REQUIRE( (dest[4] == (char)0xb0) );
+	BOOST_TEST_REQUIRE( (dest[5] == (char)0xb4) );
+	BOOST_TEST_REQUIRE( (dest[6] == (char)0xf0) );
+	BOOST_TEST_REQUIRE( (dest[7] == (char)0x9f) );
+	BOOST_TEST_REQUIRE( (dest[8] == (char)0x8d) );
+	BOOST_TEST_REQUIRE( (dest[9] == (char)0x8c) );
+}
+
+BOOST_AUTO_TEST_CASE( convert_utf16_to_utf8 ) {
+	std::u16string source = u"z\u00df\u6c34\U0001F34C";
+	
+	std::string dest = txt::utf16_to_utf8(source);
+	BOOST_TEST_REQUIRE( dest.size() == 10 );
+	BOOST_TEST_REQUIRE( (dest[0] == (char)0x7a) );
+	BOOST_TEST_REQUIRE( (dest[1] == (char)0xc3) );
+	BOOST_TEST_REQUIRE( (dest[2] == (char)0x9f) );
+	BOOST_TEST_REQUIRE( (dest[3] == (char)0xe6) );
+	BOOST_TEST_REQUIRE( (dest[4] == (char)0xb0) );
+	BOOST_TEST_REQUIRE( (dest[5] == (char)0xb4) );
+	BOOST_TEST_REQUIRE( (dest[6] == (char)0xf0) );
+	BOOST_TEST_REQUIRE( (dest[7] == (char)0x9f) );
+	BOOST_TEST_REQUIRE( (dest[8] == (char)0x8d) );
+	BOOST_TEST_REQUIRE( (dest[9] == (char)0x8c) );
+}
+
+BOOST_AUTO_TEST_CASE( convert_utf16_to_utf8_sv ) {
+	std::u16string source = u"z\u00df\u6c34\U0001F34C";
+	
+	std::string dest = txt::utf16_to_utf8(static_cast<std::u16string_view>(source));
 	BOOST_TEST_REQUIRE( dest.size() == 10 );
 	BOOST_TEST_REQUIRE( (dest[0] == (char)0x7a) );
 	BOOST_TEST_REQUIRE( (dest[1] == (char)0xc3) );
