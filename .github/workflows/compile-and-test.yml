@@ -40,7 +40,7 @@ jobs:
       - name: Install Boost
         run: sudo apt install libboost-test-dev
       - name: Install Qt6
-        run: sudo apt install qt6-core-dev
+        run: sudo apt install qt6-base-dev
       - name: Text module
         run: ./.github/jobs/module-test.sh text
       - name: CPU module
