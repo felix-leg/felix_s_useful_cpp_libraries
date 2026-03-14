@@ -41,8 +41,6 @@ For more information, please refer to <https://unlicense.org>
 		#define HAS_CKDINT
 		#include <stdckdint.h>
 	#endif
-#else
-	#warning Checked aritmetic operations are not available on your system
 #endif
 
 typedef bool _Bool; // for <stdckdint.h>
