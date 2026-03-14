@@ -67,23 +67,23 @@ jobs:
       - name: Install Boost
         run: brew install boost
       - name: Text module
-        run: ./.github/jobs/module-test.sh text
+        run: ./.github/jobs/module-test-m.sh text
       - name: CPU module
-        run: ./.github/jobs/module-test.sh cpu
+        run: ./.github/jobs/module-test-m.sh cpu
       - name: Binary module
-        run: ./.github/jobs/module-test.sh binary
+        run: ./.github/jobs/module-test-m.sh binary
       - name: Geometry module
-        run: ./.github/jobs/module-test.sh geometry
+        run: ./.github/jobs/module-test-m.sh geometry
       - name: Files module
-        run: ./.github/jobs/module-test.sh files
+        run: ./.github/jobs/module-test-m.sh files
       - name: Math module
-        run: ./.github/jobs/module-test.sh math_utils
+        run: ./.github/jobs/module-test-m.sh math_utils
       - name: Misc module
-        run: ./.github/jobs/module-test.sh misc
+        run: ./.github/jobs/module-test-m.sh misc
       - name: Primitives module
-        run: ./.github/jobs/module-test.sh primitives
+        run: ./.github/jobs/module-test-m.sh primitives
       - name: System module
-        run: ./.github/jobs/module-test.sh system
+        run: ./.github/jobs/module-test-m.sh system
   Compile-Test-Windows:
     runs-on: windows-latest
     defaults:
