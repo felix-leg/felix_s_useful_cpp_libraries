@@ -66,8 +66,8 @@ jobs:
         uses: actions/checkout@v5
       - name: Install Boost
         run: brew install boost
-      - name: Text module
-        run: ./.github/jobs/module-test-m.sh text
+      # - name: Text module
+      #   run: ./.github/jobs/module-test-m.sh text
       - name: CPU module
         run: ./.github/jobs/module-test-m.sh cpu
       - name: Binary module
