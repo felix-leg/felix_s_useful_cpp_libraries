@@ -54,7 +54,7 @@ namespace txt {
 	
 	#define SIZE_T_ERR static_cast<size_t>(-1)
 	#define SIZE_T_ERR_2 static_cast<size_t>(-2)
-	#define SIZE_T_ERR_3 static_cast<size_t>(-3)
+	#define SIZE_T_CHECK_3 static_cast<size_t>(-3)
 	#define SIZE_T_ZERO static_cast<size_t>(0)
 	
 	std::string utf32_to_utf8(const std::u32string& from) noexcept {
@@ -218,7 +218,7 @@ namespace txt {
 			}
 			
 			result += new_char;
-			if( rc != SIZE_T_ERR_3 ) {
+			if( rc != SIZE_T_CHECK_3 ) {
 				ptr += rc;
 			}
 		}
@@ -304,7 +304,7 @@ namespace txt {
 			}
 			
 			result += new_char;
-			if( rc != SIZE_T_ERR_3 ) {
+			if( rc != SIZE_T_CHECK_3 ) {
 				ptr += rc;
 			}
 		}
