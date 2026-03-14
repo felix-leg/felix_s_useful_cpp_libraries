@@ -28,8 +28,14 @@ For more information, please refer to <https://unlicense.org>
 #include "recycle.hpp"
 
 #ifdef APP_SYSTEM_IS_LINUX
-#     include <glib-object.h>
-#     include <gio/gio.h>
+#     if __has_include(<glib-object.h>) && __has_include(<gio/gio.h>)
+#          include <glib-object.h>
+#          include <gio/gio.h>
+#          define LINUX_HAS_GLIB
+#     elif __has_include(<QFile>)
+#          include <QFile>
+#          define LINUX_HAS_QT
+#     endif
 #endif
 
 #ifdef APP_SYSTEM_IS_MSWIN
@@ -50,10 +56,17 @@ struct COM_error {};
 
 bool move_to_bin(const std::filesystem::path& file_path) noexcept {
 	#ifdef APP_SYSTEM_IS_LINUX
-	GFile * file = g_file_new_for_path(file_path.c_str());
-	gboolean ok = g_file_trash(file, nullptr, nullptr);
-	g_object_unref((GObject*)file);
-	return ok;
+		#ifdef LINUX_HAS_GLIB
+			GFile * file = g_file_new_for_path(file_path.c_str());
+			gboolean ok = g_file_trash(file, nullptr, nullptr);
+			g_object_unref((GObject*)file);
+			return ok;
+		#elif defined(LINUX_HAS_QT)
+			QFile file_to_trash{file_path};
+			return file_to_trash.moveToTrash();
+		#else
+			return false; //can't trash
+		#endif
 	#endif /* ! APP_SYSTEM_IS_LINUX */
 	
 	#ifdef APP_SYSTEM_IS_MSWIN
