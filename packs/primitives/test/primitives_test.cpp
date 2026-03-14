@@ -123,7 +123,11 @@ BOOST_AUTO_TEST_CASE( i_to_binary_string ) {
 	BOOST_TEST_REQUIRE( Int::to_bin(-7, true) == "-00000000000000000000000000000111" );
 	
 	BOOST_TEST_REQUIRE( ULong::to_bin(7) == "111" );
+	#ifdef APP_COMPILER_IS_MSVC
+	BOOST_TEST_REQUIRE( ULong::to_bin(7, true) == "00000000000000000000000000000111" );
+	#else
 	BOOST_TEST_REQUIRE( ULong::to_bin(7, true) == "0000000000000000000000000000000000000000000000000000000000000111" );
+	#endif
 	BOOST_TEST_REQUIRE( Long::to_bin(7) == "111" );
 	BOOST_TEST_REQUIRE( Long::to_bin(7, true) == "0000000000000000000000000000000000000000000000000000000000000111" );
 	BOOST_TEST_REQUIRE( Long::to_bin(-7) == "-111" );
@@ -214,7 +218,11 @@ BOOST_AUTO_TEST_CASE( i_to_hex_string ) {
 	BOOST_TEST_REQUIRE( Int::to_hex(-0x2f, true) == "-0000002f" );
 	
 	BOOST_TEST_REQUIRE( ULong::to_hex(0x5f) == "5f" );
+	#ifdef APP_COMPILER_IS_MSVC
+	BOOST_TEST_REQUIRE( ULong::to_hex(0x5f, true) == "0000005f" );
+	#else
 	BOOST_TEST_REQUIRE( ULong::to_hex(0x5f, true) == "000000000000005f" );
+	#endif
 	BOOST_TEST_REQUIRE( Long::to_hex(0x2f) == "2f" );
 	BOOST_TEST_REQUIRE( Long::to_hex(0x2f, true) == "000000000000002f" );
 	BOOST_TEST_REQUIRE( Long::to_hex(-0x2f) == "-2f" );
@@ -569,7 +577,11 @@ BOOST_AUTO_TEST_CASE( fdl_to_string_conversion ) {
 	BOOST_TEST_REQUIRE( LongDouble::to_scientific( 3.14159l ) == "3.14159e+00" );
 	BOOST_TEST_REQUIRE( LongDouble::to_general( 3.14159l ) == "3.14159" );
 	BOOST_TEST_REQUIRE( LongDouble::to_fixed( 3.14159l ) == "3.14159" );
+	#ifdef APP_COMPILER_IS_MSVC
+	BOOST_TEST_REQUIRE( LongDouble::to_hex( 3.14159l ) == "1.921f9f01b866ep+1" );
+	#else
 	BOOST_TEST_REQUIRE( LongDouble::to_hex( 3.14159l ) == "c.90fcf80dc33721dp-2" );
+	#endif
 }
 
 BOOST_AUTO_TEST_CASE( fdl_to_string_conversion_with_precision ) {
@@ -586,7 +598,11 @@ BOOST_AUTO_TEST_CASE( fdl_to_string_conversion_with_precision ) {
 	BOOST_TEST_REQUIRE( LongDouble::to_scientific( 3.14159l, 2 ) == "3.14e+00" );
 	BOOST_TEST_REQUIRE( LongDouble::to_general( 3.14159l, 3 ) == "3.14" );
 	BOOST_TEST_REQUIRE( LongDouble::to_fixed( 3.14159l, 2 ) == "3.14" );
+	#ifdef APP_COMPILER_IS_MSVC
+	BOOST_TEST_REQUIRE( LongDouble::to_hex( 3.14159l, 2 ) == "1.92p+1" );
+	#else
 	BOOST_TEST_REQUIRE( LongDouble::to_hex( 3.14159l, 2 ) == "c.91p-2" );
+	#endif
 }
 
 BOOST_AUTO_TEST_CASE( fdl_from_string_conversion ) {
