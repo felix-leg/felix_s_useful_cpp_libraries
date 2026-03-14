@@ -29,6 +29,7 @@ For more information, please refer to <https://unlicense.org>
 
 #include <cstdlib>
 #include <cmath>
+#include <math.h>
 #include <cfenv>
 #include <limits>
 #include <charconv>
@@ -519,13 +520,13 @@ const double Double::sNaN = std::numeric_limits<double>::signaling_NaN();
 const long double LongDouble::sNaN = std::numeric_limits<long double>::signaling_NaN();
 
 float Float::abs(float x) {
-	return std::fabsf(x);
+	return fabsf(x);
 }
 double Double::abs(double x) {
-	return std::fabs(x);
+	return fabs(x);
 }
 long double LongDouble::abs(long double x) {
-	return std::fabsl(x);
+	return fabsl(x);
 }
 
 bool Float::is_nan(float x) {
