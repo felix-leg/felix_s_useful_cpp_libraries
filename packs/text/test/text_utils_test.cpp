@@ -2,19 +2,23 @@
 #define BOOST_TEST_MODULE text_utils_test
 #include <boost/test/unit_test.hpp>
 
-#include "../src/join.hpp"
-#include "../src/utf32/case.hpp"
-#include "../src/utf8/case.hpp"
 #include "../src/ascii/case.hpp"
-#include "../src/convert.hpp"
-#include "../src/split.hpp"
-#include "../src/just.hpp"
-#include "../src/utf32/checks.hpp"
-#include "../src/utf8/checks.hpp"
-#include "../src/utf32/trim.hpp"
-#include "../src/utf8/trim.hpp"
 #include "../src/ascii/trim.hpp"
+#include "../src/convert.hpp"
+#include "../src/join.hpp"
+#include "../src/just.hpp"
+#include "../src/split.hpp"
+#include "../src/utf16/case.hpp"
+#include "../src/utf16/checks.hpp"
+#include "../src/utf16/iter.hpp"
+#include "../src/utf16/trim.hpp"
+#include "../src/utf32/case.hpp"
+#include "../src/utf32/checks.hpp"
+#include "../src/utf32/trim.hpp"
+#include "../src/utf8/case.hpp"
+#include "../src/utf8/checks.hpp"
 #include "../src/utf8/iter.hpp"
+#include "../src/utf8/trim.hpp"
 
 #include <string>
 #include <vector>
@@ -79,6 +83,28 @@ BOOST_AUTO_TEST_CASE( utf8_to_upper_string ) {
 	std::string dest{"STRASSE"};
 	
 	auto result = utf8::to_upper(source);
+	BOOST_TEST_REQUIRE( (result == dest) );
+}
+
+BOOST_AUTO_TEST_CASE( utf16_to_lower_char ) {
+	BOOST_TEST_REQUIRE( (utf16::to_lower(u"Ą") == u"ą") );
+	BOOST_TEST_REQUIRE( (utf16::to_lower(u"Ę") == u"ę") );
+	BOOST_TEST_REQUIRE( (utf16::to_lower(u"Ś") == u"ś") );
+	BOOST_TEST_REQUIRE( (utf16::to_lower(u"Ć") == u"ć") );
+}
+
+BOOST_AUTO_TEST_CASE( utf16_to_upper_char ) {
+	BOOST_TEST_REQUIRE( (utf16::to_upper(u"ą") == u"Ą") );
+	BOOST_TEST_REQUIRE( (utf16::to_upper(u"ę") == u"Ę") );
+	BOOST_TEST_REQUIRE( (utf16::to_upper(u"ś") == u"Ś") );
+	BOOST_TEST_REQUIRE( (utf16::to_upper(u"ć") == u"Ć") );
+}
+
+BOOST_AUTO_TEST_CASE( utf16_to_upper_string ) {
+	std::u16string source{u"Straße"};
+	std::u16string dest{u"STRASSE"};
+	
+	auto result = utf16::to_upper(source);
 	BOOST_TEST_REQUIRE( (result == dest) );
 }
 
@@ -470,6 +496,87 @@ BOOST_AUTO_TEST_CASE( utf32_is_title_case ) {
 	
 	BOOST_TEST_REQUIRE( ! utf32::is_title_case(U'a') );
 	BOOST_TEST_REQUIRE( ! utf32::is_title_case(U'ą') );
+}
+
+BOOST_AUTO_TEST_CASE( utf16_is_alpha ) {
+	BOOST_TEST_REQUIRE( utf16::is_alpha(u"a") );
+	BOOST_TEST_REQUIRE( utf16::is_alpha(u"A") );
+	BOOST_TEST_REQUIRE( utf16::is_alpha(u"ą") );
+	BOOST_TEST_REQUIRE( utf16::is_alpha(u"Ą") );
+	
+	BOOST_TEST_REQUIRE( ! utf16::is_alpha(u"1") );
+	BOOST_TEST_REQUIRE( ! utf16::is_alpha(u" ") );
+	BOOST_TEST_REQUIRE( ! utf16::is_alpha(u"&") );
+}
+
+BOOST_AUTO_TEST_CASE( utf16_is_ascii ) {
+	BOOST_TEST_REQUIRE( utf16::is_ascii(u"a") );
+	BOOST_TEST_REQUIRE( utf16::is_ascii(u"A") );
+	BOOST_TEST_REQUIRE( utf16::is_ascii(u"1") );
+	BOOST_TEST_REQUIRE( utf16::is_ascii(u" ") );
+	BOOST_TEST_REQUIRE( utf16::is_ascii(u"&") );
+	
+	BOOST_TEST_REQUIRE( ! utf16::is_ascii(u"ą") );
+	BOOST_TEST_REQUIRE( ! utf16::is_ascii(u"Ą") );
+}
+
+BOOST_AUTO_TEST_CASE( utf16_is_digit ) {
+	BOOST_TEST_REQUIRE( utf16::is_digit(u"1") );
+	BOOST_TEST_REQUIRE( utf16::is_digit(u"5") );
+	BOOST_TEST_REQUIRE( utf16::is_digit(u"0") );
+	
+	BOOST_TEST_REQUIRE( ! utf16::is_digit(u"A") );
+	BOOST_TEST_REQUIRE( ! utf16::is_digit(u"ą") );
+}
+
+BOOST_AUTO_TEST_CASE( utf16_is_numeric ) {
+	BOOST_TEST_REQUIRE( utf16::is_numeric(u"1") );
+	BOOST_TEST_REQUIRE( utf16::is_numeric(u"5") );
+	BOOST_TEST_REQUIRE( utf16::is_numeric(u"0") );
+	
+	BOOST_TEST_REQUIRE( ! utf16::is_numeric(u"A") );
+	BOOST_TEST_REQUIRE( ! utf16::is_numeric(u"ą") );
+}
+
+BOOST_AUTO_TEST_CASE( utf16_is_print ) {
+	BOOST_TEST_REQUIRE( utf16::is_print(u"A") );
+	BOOST_TEST_REQUIRE( utf16::is_print(u"a") );
+	BOOST_TEST_REQUIRE( utf16::is_print(u"2") );
+	
+	BOOST_TEST_REQUIRE( ! utf16::is_print(u"\5") );
+}
+
+BOOST_AUTO_TEST_CASE( utf16_is_space ) {
+	BOOST_TEST_REQUIRE( utf16::is_space(u" ") );
+	BOOST_TEST_REQUIRE( utf16::is_space(u"\t") );
+	BOOST_TEST_REQUIRE( utf16::is_space(u"\n") );
+	
+	BOOST_TEST_REQUIRE( ! utf16::is_space(u"A") );
+	BOOST_TEST_REQUIRE( ! utf16::is_space(u"ą") );
+}
+
+BOOST_AUTO_TEST_CASE( utf16_is_lower_case ) {
+	BOOST_TEST_REQUIRE( utf16::is_lower_case(u"a") );
+	BOOST_TEST_REQUIRE( utf16::is_lower_case(u"ą") );
+	
+	BOOST_TEST_REQUIRE( ! utf16::is_lower_case(u"A") );
+	BOOST_TEST_REQUIRE( ! utf16::is_lower_case(u"Ą") );
+}
+
+BOOST_AUTO_TEST_CASE( ut16_is_upper_case ) {
+	BOOST_TEST_REQUIRE( utf16::is_upper_case(u"A") );
+	BOOST_TEST_REQUIRE( utf16::is_upper_case(u"Ą") );
+	
+	BOOST_TEST_REQUIRE( ! utf16::is_upper_case(u"a") );
+	BOOST_TEST_REQUIRE( ! utf16::is_upper_case(u"ą") );
+}
+
+BOOST_AUTO_TEST_CASE( utf16_is_title_case ) {
+	BOOST_TEST_REQUIRE( utf16::is_title_case(u"A") );
+	BOOST_TEST_REQUIRE( utf16::is_title_case(u"Ą") );
+	
+	BOOST_TEST_REQUIRE( ! utf16::is_title_case(u"a") );
+	BOOST_TEST_REQUIRE( ! utf16::is_title_case(u"ą") );
 }
 
 BOOST_AUTO_TEST_CASE( utf8_is_alpha ) {

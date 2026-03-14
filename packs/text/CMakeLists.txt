@@ -38,20 +38,24 @@ enable_testing()
 
 #the library
 add_library(tested_lib
-	"src/utf32/case.hpp" "src/utf32/case.cpp"
-	"src/utf8/case.hpp" "src/utf8/case.cpp"
 	"src/ascii/case.hpp" "src/ascii/case.cpp"
-	"src/convert.hpp" "src/convert.cpp"
-	"src/split.hpp" "src/split.cpp"
-	"src/just.hpp" "src/just.cpp"
-	"src/utf32/checks.hpp" "src/utf32/checks.cpp"
-	"src/utf8/checks.hpp" "src/utf8/checks.cpp"
 	"src/ascii/checks.hpp" "src/ascii/checks.cpp"
-	"src/utf32/trim.hpp" "src/utf32/trim.cpp"
-	"src/utf8/trim.hpp" "src/utf8/trim.cpp"
 	"src/ascii/trim.hpp" "src/ascii/trim.cpp"
+	"src/convert.hpp" "src/convert.cpp"
 	"src/db.hpp" "src/db.cpp"
+	"src/just.hpp" "src/just.cpp"
+	"src/split.hpp" "src/split.cpp"
+	"src/utf32/case.hpp" "src/utf32/case.cpp"
+	"src/utf32/checks.hpp" "src/utf32/checks.cpp"
+	"src/utf32/trim.hpp" "src/utf32/trim.cpp"
+	"src/utf16/iter.hpp" "src/utf16/iter.cpp"
+	"src/utf16/case.hpp" "src/utf16/case.cpp"
+	"src/utf16/checks.hpp" "src/utf16/checks.cpp"
+	"src/utf16/trim.hpp" "src/utf16/trim.cpp"
+	"src/utf8/case.hpp" "src/utf8/case.cpp"
+	"src/utf8/checks.hpp" "src/utf8/checks.cpp"
 	"src/utf8/iter.hpp" "src/utf8/iter.cpp"
+	"src/utf8/trim.hpp" "src/utf8/trim.cpp"
 )
 target_sources(tested_lib PRIVATE FILE_SET "incl" TYPE HEADERS
 	FILES
