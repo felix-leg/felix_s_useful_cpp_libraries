@@ -79,10 +79,11 @@ namespace txt {
 			iconv_close(i_state);
 		}
 		#endif
+		std::string result{};
+		#ifndef APP_SYSTEM_IS_MACOS
 		std::string old_locale {std::setlocale(LC_CTYPE, nullptr)};
 		std::setlocale(LC_CTYPE, "en_US.utf8");
 		
-		std::string result{};
 		char out[MB_LEN_MAX+1] = {0};
 		std::mbstate_t state{};
 		
@@ -95,6 +96,9 @@ namespace txt {
 		
 		std::setlocale(LC_CTYPE, old_locale.c_str());
 		return result;
+		#else
+		return result; //error
+		#endif
 	}
 	
 	std::u32string utf8_to_utf32(const std::string& from) noexcept {
@@ -119,10 +123,11 @@ namespace txt {
 			iconv_close(i_state);
 		}
 		#endif
+		std::u32string result{};
+		#ifndef APP_SYSTEM_IS_MACOS
 		std::string old_locale {std::setlocale(LC_CTYPE, nullptr)};
 		std::setlocale(LC_CTYPE, "en_US.utf8");
 		
-		std::u32string result{};
 		char32_t new_char;
 		std::mbstate_t state{};
 		
@@ -139,6 +144,9 @@ namespace txt {
 		
 		std::setlocale(LC_CTYPE, old_locale.c_str());
 		return result;
+		#else
+		return result; //error
+		#endif
 	}
 	
 	std::string utf16_to_utf8(const std::u16string& from) noexcept {
@@ -163,10 +171,11 @@ namespace txt {
 			iconv_close(i_state);
 		}
 		#endif
+		std::string result{};
+		#ifndef APP_SYSTEM_IS_MACOS
 		std::string old_locale {std::setlocale(LC_CTYPE, nullptr)};
 		std::setlocale(LC_CTYPE, "en_US.utf8");
 		
-		std::string result{};
 		char out[MB_LEN_MAX+1] = {0};
 		std::mbstate_t state{};
 		
@@ -179,6 +188,9 @@ namespace txt {
 		
 		std::setlocale(LC_CTYPE, old_locale.c_str());
 		return result;
+		#else
+		return result; //error
+		#endif
 	}
 	
 	std::u16string utf8_to_utf16(const std::string& from) noexcept {
@@ -203,10 +215,11 @@ namespace txt {
 			iconv_close(i_state);
 		}
 		#endif
+		std::u16string result{};
+		#ifndef APP_SYSTEM_IS_MACOS
 		std::string old_locale {std::setlocale(LC_CTYPE, nullptr)};
 		std::setlocale(LC_CTYPE, "en_US.utf8");
 		
-		std::u16string result{};
 		char16_t new_char;
 		std::mbstate_t state{};
 		
@@ -225,6 +238,9 @@ namespace txt {
 		
 		std::setlocale(LC_CTYPE, old_locale.c_str());
 		return result;
+		#else
+		return result; //error
+		#endif
 	}
 	
 	std::string utf32_to_utf8(const std::u32string_view& from) noexcept {
@@ -249,10 +265,11 @@ namespace txt {
 			iconv_close(i_state);
 		}
 		#endif
+		std::string result{};
+		#ifndef APP_SYSTEM_IS_MACOS
 		std::string old_locale {std::setlocale(LC_CTYPE, nullptr)};
 		std::setlocale(LC_CTYPE, "en_US.utf8");
 		
-		std::string result{};
 		char out[MB_LEN_MAX+1] = {0};
 		std::mbstate_t state{};
 		
@@ -265,6 +282,9 @@ namespace txt {
 		
 		std::setlocale(LC_CTYPE, old_locale.c_str());
 		return result;
+		#else
+		return result; //error
+		#endif
 	}
 	
 	std::u16string utf8_to_utf16(const std::string_view& from) noexcept {
@@ -289,10 +309,11 @@ namespace txt {
 			iconv_close(i_state);
 		}
 		#endif
+		std::u16string result{};
+		#ifndef APP_SYSTEM_IS_MACOS
 		std::string old_locale {std::setlocale(LC_CTYPE, nullptr)};
 		std::setlocale(LC_CTYPE, "en_US.utf8");
 		
-		std::u16string result{};
 		char16_t new_char;
 		std::mbstate_t state{};
 		
@@ -311,6 +332,9 @@ namespace txt {
 		
 		std::setlocale(LC_CTYPE, old_locale.c_str());
 		return result;
+		#else
+		return result; //error
+		#endif
 	}
 	
 	std::u32string utf8_to_utf32(const std::string_view& from) noexcept {
@@ -335,10 +359,11 @@ namespace txt {
 			iconv_close(i_state);
 		}
 		#endif
+		std::u32string result{};
+		#ifndef APP_SYSTEM_IS_MACOS
 		std::string old_locale {std::setlocale(LC_CTYPE, nullptr)};
 		std::setlocale(LC_CTYPE, "en_US.utf8");
 		
-		std::u32string result{};
 		char32_t new_char;
 		std::mbstate_t state{};
 		
@@ -355,6 +380,9 @@ namespace txt {
 		
 		std::setlocale(LC_CTYPE, old_locale.c_str());
 		return result;
+		#else
+		return result; //error
+		#endif
 	}
 	
 	std::string utf16_to_utf8(const std::u16string_view& from) noexcept {
@@ -379,10 +407,11 @@ namespace txt {
 			iconv_close(i_state);
 		}
 		#endif
+		std::string result{};
+		#ifndef APP_SYSTEM_IS_MACOS
 		std::string old_locale {std::setlocale(LC_CTYPE, nullptr)};
 		std::setlocale(LC_CTYPE, "en_US.utf8");
 		
-		std::string result{};
 		char out[MB_LEN_MAX+1] = {0};
 		std::mbstate_t state{};
 		
@@ -395,6 +424,9 @@ namespace txt {
 		
 		std::setlocale(LC_CTYPE, old_locale.c_str());
 		return result;
+		#else
+		return result; //error
+		#endif
 	}
 	
 	#ifdef APP_SYSTEM_IS_MSWIN
