@@ -30,6 +30,7 @@ For more information, please refer to <https://unlicense.org>
 #include <cmath>
 #include <numbers>
 #include <utility>
+#include "halfturn.h"
 
 namespace math {
 	
@@ -314,14 +315,23 @@ namespace math {
 	}
 	
 	float sin(const angle& a) {
+		if( a.unit == angle::TURN ) {
+			return sin_ht(a.as_turns());
+		}
 		return std::sin(a.as_radians());
 	}
 	
 	float cos(const angle& a) {
+		if( a.unit == angle::TURN ) {
+			return cos_ht(a.as_turns());
+		}
 		return std::cos(a.as_radians());
 	}
 	
 	float tan(const angle& a) {
+		if( a.unit == angle::TURN ) {
+			return tan_ht(a.as_turns());
+		}
 		return std::tan(a.as_radians());
 	}
 	

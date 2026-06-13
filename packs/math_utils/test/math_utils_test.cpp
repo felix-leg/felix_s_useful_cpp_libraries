@@ -36,6 +36,7 @@ For more information, please refer to <https://unlicense.org>
 #include "../src/ranges_calc.hpp"
 #include "../src/gcd_lcm.hpp"
 #include "../src/mod.hpp"
+#include "../src/halfturn.h"
 
 BOOST_AUTO_TEST_CASE( angle_compare ) {
 	auto a1 = math::degrees(180.0f);
@@ -47,6 +48,16 @@ BOOST_AUTO_TEST_CASE( angle_compare ) {
 	BOOST_TEST_REQUIRE( !(a1 <= a2) );
 	BOOST_TEST_REQUIRE( !(a1 == a2) );
 	BOOST_TEST_REQUIRE( (a1 != a2) );
+}
+
+BOOST_AUTO_TEST_CASE( angle_trig_in_c23 ) {
+	auto a1 = math::turns(0.5f);
+	
+	if( can_use_c23() ) {
+		BOOST_TEST_REQUIRE( math::sin(a1) == 0.0f );
+		BOOST_TEST_REQUIRE( math::cos(a1) == -1.0f );
+		BOOST_TEST_REQUIRE( math::tan(a1) == 0.0f );
+	}
 }
 
 BOOST_AUTO_TEST_CASE( clamping ) {

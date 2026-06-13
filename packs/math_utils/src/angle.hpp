@@ -40,6 +40,10 @@ namespace math {
 		Unit unit;
 		float value;
 		explicit(false) angle(float v, Unit u) noexcept;
+		
+		friend float sin(const angle& a);
+		friend float cos(const angle& a);
+		friend float tan(const angle& a);
 	public:
 		angle(const angle& other) = default;
 		angle& operator=(const angle& other) = default;

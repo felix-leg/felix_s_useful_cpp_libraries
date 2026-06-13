@@ -25,11 +25,15 @@
 #
 cmake_minimum_required(VERSION 3.5...4.0.0)
 # C++23
-set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD 26)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
+# C23
+set(CMAKE_C_STANDARD 23)
+set(CMAKE_C_STANDARD_REQUIRED ON)
+set(CMAKE_C_EXTENSIONS OFF)
 
-project(MathUtils VERSION 0.1.0 LANGUAGES CXX)
+project(MathUtils VERSION 0.1.0 LANGUAGES C CXX)
 
 include("../common.cmake")
 
@@ -41,6 +45,7 @@ add_library(tested_lib
 	"src/angle.hpp" "src/angle.cpp"
 	"src/ranges_calc.hpp" "src/ranges_calc.cpp"
 	"src/gcd_lcm.hpp" "src/gcd_lcm.cpp"
+	"src/halfturn.h" "src/halfturn.c"
 )
 target_sources(tested_lib PRIVATE FILE_SET "incl" TYPE HEADERS
 	FILES "src/mod.hpp"
