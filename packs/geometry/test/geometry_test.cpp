@@ -35,7 +35,9 @@ For more information, please refer to <https://unlicense.org>
 
 constexpr float PI_2 = std::numbers::pi_v<float> / 2.0f;
 
-#include "../src/geometry.hpp"
+#include "../src/vectors.hpp"
+#include "../src/matrices.hpp"
+#include "../src/quaternions.hpp"
 
 
 BOOST_AUTO_TEST_CASE( vec_init ) {

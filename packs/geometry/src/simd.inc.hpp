@@ -25,34 +25,20 @@ OTHER DEALINGS IN THE SOFTWARE.
 For more information, please refer to <https://unlicense.org>
 
 */
+#if __has_include(<simd>)
+#	include <simd>
+#	define HAS_SIMD
+#endif
 
-#pragma once
-#ifndef FELIXS_PACK_GEOMETRY_ELEMENTS
-#define FELIXS_PACK_GEOMETRY_ELEMENTS
-#include "vectors.hpp"
-
-namespace geometry::elements {
+#ifdef HAS_SIMD
+namespace simd {
+	using vec2 = std::simd::vec<float, 2>;
+	using vec3 = std::simd::vec<float, 3>;
+	using vec4 = std::simd::vec<float, 4>;
 	
-	struct line2d {
-		::vec::vec2 base;
-		::vec::vec2 direction;
-		
-		[[nodiscard]] ::vec::vec2 get_point(float t) const noexcept;
-		[[nodiscard]] float distance_to(const ::vec::vec2& point) const noexcept;
-		[[nodiscard]] float distance_to(const line2d& other_line) const noexcept;
-	};//! struct line2d
-	
-	struct line3d {
-		::vec::vec3 base;
-		::vec::vec3 direction;
-		
-		[[nodiscard]] ::vec::vec3 get_point(float t) const noexcept;
-		[[nodiscard]] float distance_to(const ::vec::vec3& point) const noexcept;
-		[[nodiscard]] float distance_to(const line3d& other_line) const noexcept;
-	};//! struct line3d
-	
-} //! namespace lines
-
-#endif //FELIXS_PACK_GEOMETRY_ELEMENTS
-
-
+	using std::simd::reduce;
+}
+# define SIMD_INIT2(var,val1,val2) do { float load[2] = {(val1),(val2)}; var = ::simd::vec2{load}; } while(false)
+# define SIMD_INIT3(var,val1,val2,val3) do { float load[3] = {(val1),(val2),(val3)}; var = ::simd::vec3{load}; } while(false)
+# define SIMD_INIT4(var,val1,val2,val3,val4) do { float load[4] = {(val1),(val2),(val3),(val4)}; var = ::simd::vec4{load}; } while(false)
+#endif

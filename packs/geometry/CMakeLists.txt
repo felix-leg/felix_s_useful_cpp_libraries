@@ -25,7 +25,7 @@
 #
 cmake_minimum_required(VERSION 3.5...4.0.0)
 # C++23
-set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD 26)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
@@ -38,9 +38,15 @@ enable_testing()
 
 #the library
 add_library(tested_lib
-	"src/geometry.hpp" "src/geometry.cpp"
 	"src/transform.hpp" "src/transform.cpp"
 	"src/elements.hpp" "src/elements.cpp"
+	"src/matrices.hpp" "src/matrices.cpp"
+	"src/quaternions.hpp" "src/quaternions.cpp"
+	"src/vectors.hpp" "src/vectors.cpp"
+)
+target_sources(tested_lib PRIVATE FILE_SET "incl" TYPE HEADERS
+	FILES
+	"src/simd.inc.hpp"
 )
 target_include_directories(tested_lib PRIVATE "${CMAKE_SOURCE_DIR}/src")
 set_target_env_options(tested_lib)

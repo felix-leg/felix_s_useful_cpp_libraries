@@ -26,552 +26,13 @@ For more information, please refer to <https://unlicense.org>
 
 */
 
-#include "geometry.hpp"
+#include "matrices.hpp"
 
 #include <utility>
 #include <cmath>
 
 // SIMD support
-#if __has_include(<simd>)
-#	include <simd>
-#	define NS(T) std::T
-#	define HAS_SIMD
-#elif __has_include(<experimental/simd>)
-#	include <experimental/simd>
-#	define NS(T) std::experimental::T
-#	define HAS_SIMD
-#endif
-
-#ifdef HAS_SIMD
-namespace simd {
-	using NS(fixed_size_simd);
-	using NS(memory_alignment_v);
-	using NS(reduce);
-	
-	constexpr auto aligned = NS(vector_aligned); //data is aligned simd-frendly
-	constexpr auto unaligned = NS(element_aligned);//data is aligned arbitrary
-}
-#	define SIMD_ALIGN(T) alignas(::simd::memory_alignment_v<T>)
-# define SIMD_INIT2(var,val1,val2) var[0] = (val1); var[1] = (val2)
-# define SIMD_INIT3(var,val1,val2,val3) var[0] = (val1); var[1] = (val2); var[2] = (val3)
-# define SIMD_INIT4(var,val1,val2,val3,val4) var[0] = (val1); var[1] = (val2); var[2] = (val3); var[3] = (val4)
-#	undef NS
-#endif
-
-namespace vec {
-	
-bvec2::bvec2(bool _x, bool _y) noexcept : x{_x}, y{_y} {}
-
-vec2::vec2() noexcept : x{0.0f}, y{0.0f} {}
-vec2::vec2(float _x, float _y) noexcept : x{_x}, y{_y} {}
-
-bool bvec2::all() const noexcept {
-	return x && y;
-}
-bool bvec2::any() const noexcept {
-	return x || y;
-}
-bool bvec2::none() const noexcept {
-	return !(x || y);
-}
-
-vec3 vec2::to_vec3(float z) const noexcept {
-	return vec3{x, y, z};
-}
-vec4 vec2::to_vec4(float z, float w) const noexcept {
-	return vec4{x, y, z, w};
-}
-vec4 vec2::to_vec4(float z, bool is_point) const noexcept {
-	return vec4{x, y, z, is_point ? 1.0f : 0.0f};
-}
-
-vec2& vec2::operator+=(const vec2& other) noexcept {
-	x += other.x;
-	y += other.y;
-	return *this;
-}
-vec2& vec2::operator-=(const vec2& other) noexcept {
-	x -= other.x;
-	y -= other.y;
-	return *this;
-}
-vec2& vec2::operator*=(float scalar) noexcept {
-	x *= scalar;
-	y *= scalar;
-	return *this;
-}
-vec2& vec2::operator/=(float scalar) {
-	x /= scalar;
-	y /= scalar;
-	return *this;
-}
-
-vec2 vec2::operator-() const noexcept {
-	return vec2{-x, -y};
-}
-vec2 operator+(const vec2& a, const vec2& b) noexcept {
-	return vec2{a.x + b.x, a.y + b.y};
-}
-vec2 operator-(const vec2& a, const vec2& b) noexcept {
-	return vec2{a.x - b.x, a.y - b.y};
-}
-vec2 operator*(const vec2& v, float s) noexcept {
-	return vec2{v.x * s, v.y * s};
-}
-vec2 operator*(float s, const vec2& v) noexcept {
-	return v * s;
-}
-vec2 operator/(const vec2& v, float s) {
-	return vec2{v.x / s, v.y / s};
-}
-
-bool vec2::operator==(const vec2& other) const noexcept {
-	return (x == other.x) && (y == other.y);
-}
-bool vec2::operator!=(const vec2& other) const noexcept {
-	return (x != other.x) || (y != other.y);
-}
-
-float vec2::length() const noexcept {
-	return std::sqrt(x*x + y*y);
-}
-float vec2::length_sq() const noexcept {
-	return x*x + y*y;
-}
-vec2 vec2::normalized() const {
-	return *this / length();
-}
-vec2& vec2::normalize() {
-	float l = length();
-	x /= l;
-	y /= l;
-	return *this;
-}
-
-bvec2 is(const vec2& a, CwOp op, const vec2& b) noexcept {
-	switch(op) {
-		case LESS:
-			return bvec2(a.x < b.x, a.y < b.y);
-		case LESS_EQ:
-			return bvec2(a.x <= b.x, a.y <= b.y);
-		case GREATER:
-			return bvec2(a.x > b.x, a.y > b.y);
-		case GREATER_EQ:
-			return bvec2(a.x >= b.x, a.y >= b.y);
-		case EQ:
-			return bvec2(a.x == b.x, a.y == b.y);
-		case NOT_EQ:
-			return bvec2(a.x != b.x, a.y != b.y);
-		default:
-			std::unreachable();
-	}
-}
-
-bvec2 operator&&(const bvec2& a, const bvec2& b) noexcept {
-	return bvec2(a.x && b.x, a.y && b.y);
-}
-bvec2 operator||(const bvec2& a, const bvec2& b) noexcept {
-	return bvec2(a.x || b.x, a.y || b.y);
-}
-bvec2 operator!(const bvec2& b) noexcept {
-	return bvec2( ! b.x, ! b.y);
-}
-
-vec2 mul(const vec2& a, const vec2& b) noexcept {
-	return vec2(a.x * b.x, a.y * b.y);
-}
-vec2 div(const vec2& a, const vec2& b) {
-	return vec2(a.x / b.x, a.y / b.y);
-}
-
-std::optional<vec2> projection(const vec2& projected, const vec2& onto) noexcept {
-	float b_len = onto.length_sq();
-	if( b_len == 0.0f ) return {};
-	
-	return (dot(projected, onto) / b_len ) * onto;
-}
-std::optional<vec2> rejection(const vec2& rejected, const vec2& from) noexcept {
-	return projection(rejected, from).transform([&rejected](const vec2& r){ return rejected - r; });
-}
-
-bvec3::bvec3(bool _x, bool _y, bool _z) noexcept : x{_x}, y{_y}, z{_z} {}
-
-vec3::vec3() noexcept : x{0.0f}, y{0.0f}, z{0.0f} {}
-vec3::vec3(float _x, float _y, float _z) noexcept : x{_x}, y{_y}, z{_z} {}
-vec3::vec3(const vec2& v2, float _z) noexcept : x{v2.x}, y{v2.y}, z{_z} {}
-
-bool bvec3::all() const noexcept {
-	return (x && y) && (y && z);
-}
-bool bvec3::any() const noexcept {
-	return (x || y) || (y || z);
-}
-bool bvec3::none() const noexcept {
-	return ! any();
-}
-
-vec4 vec3::to_vec4(float w) const noexcept {
-	return vec4{x, y, z, w};
-}
-vec4 vec3::to_vec4(bool is_point) const noexcept {
-	return vec4{x, y, z, is_point ? 1.0f : 0.0f};
-}
-vec2 vec3::xy() const noexcept {
-	return vec2(x,y);
-}
-vec2 vec3::xz() const noexcept {
-	return vec2(x,z);
-}
-vec2 vec3::yz() const noexcept {
-	return vec2(y,z);
-}
-vec2 vec3::yx() const noexcept {
-	return vec2(y,x);
-}
-vec2 vec3::zx() const noexcept {
-	return vec2(z,x);
-}
-
-void vec3::xy(const vec2& source) noexcept {
-	x = source.x;
-	y = source.y;
-}
-void vec3::xz(const vec2& source) noexcept {
-	x = source.x;
-	z = source.y;
-}
-void vec3::yz(const vec2& source) noexcept {
-	y = source.x;
-	z = source.y;
-}
-void vec3::yx(const vec2& source) noexcept {
-	y = source.x;
-	x = source.y;
-}
-void vec3::zx(const vec2& source) noexcept {
-	z = source.x;
-	x = source.y;
-}
-
-vec3& vec3::operator+=(const vec3& other) noexcept {
-	x += other.x;
-	y += other.y;
-	z += other.z;
-	return *this;
-}
-vec3& vec3::operator-=(const vec3& other) noexcept {
-	x -= other.x;
-	y -= other.y;
-	z -= other.z;
-	return *this;
-}
-vec3& vec3::operator*=(float scalar) noexcept {
-	x *= scalar;
-	y *= scalar;
-	z *= scalar;
-	return *this;
-}
-vec3& vec3::operator/=(float scalar) {
-	x /= scalar;
-	y /= scalar;
-	z /= scalar;
-	return *this;
-}
-
-vec3 vec3::operator-() const noexcept {
-	return vec3{-x, -y, -z};
-}
-vec3 operator+(const vec3& a, const vec3& b) noexcept {
-	return vec3{a.x + b.x, a.y + b.y, a.z + b.z};
-}
-vec3 operator-(const vec3& a, const vec3& b) noexcept {
-	return vec3{a.x - b.x, a.y - b.y, a.z - b.z};
-}
-vec3 operator*(const vec3& v, float s) noexcept {
-	return vec3{v.x * s, v.y * s, v.z * s};
-}
-vec3 operator*(float s, const vec3& v) noexcept {
-	return v * s;
-}
-vec3 operator/(const vec3& v, float s) {
-	return vec3{v.x / s, v.y / s, v.z / s};
-}
-
-bool vec3::operator==(const vec3& other) const noexcept {
-	return (x == other.x) && (y == other.y) && (z == other.z);
-}
-bool vec3::operator!=(const vec3& other) const noexcept {
-	return (x != other.x) || (y != other.y) || (z != other.z);
-}
-
-float vec3::length() const noexcept {
-	return std::sqrt(x*x + y*y + z*z);
-}
-float vec3::length_sq() const noexcept {
-	return x*x + y*y + z*z;
-}
-vec3 vec3::normalized() const {
-	return *this / length();
-}
-vec3& vec3::normalize() {
-	float l = length();
-	x /= l;
-	y /= l;
-	z /= l;
-	return *this;
-}
-
-bvec3 is(const vec3& a, CwOp op, const vec3& b) noexcept {
-	switch(op) {
-		case LESS:
-			return bvec3(a.x < b.x, a.y < b.y, a.z < b.z);
-		case LESS_EQ:
-			return bvec3(a.x <= b.x, a.y <= b.y, a.z <= b.z);
-		case GREATER:
-			return bvec3(a.x > b.x, a.y > b.y, a.z > b.z);
-		case GREATER_EQ:
-			return bvec3(a.x >= b.x, a.y >= b.y, a.z >= b.z);
-		case EQ:
-			return bvec3(a.x == b.x, a.y == b.y, a.z == b.z);
-		case NOT_EQ:
-			return bvec3(a.x != b.x, a.y != b.y, a.z != b.z);
-		default:
-			std::unreachable();
-	}
-}
-
-bvec3 operator&&(const bvec3& a, const bvec3& b) noexcept {
-	return bvec3(a.x && b.x, a.y && b.y, a.z && b.z);
-}
-bvec3 operator||(const bvec3& a, const bvec3& b) noexcept {
-	return bvec3(a.x || b.x, a.y || b.y, a.z || b.z);
-}
-bvec3 operator!(const bvec3& b) noexcept {
-	return bvec3(! b.x, ! b.y, ! b.z);
-}
-
-vec3 mul(const vec3& a, const vec3& b) noexcept {
-	return vec3(a.x * b.x, a.y * b.y, a.z * b.z);
-}
-vec3 div(const vec3& a, const vec3& b) {
-	return vec3(a.x / b.x, a.y / b.y, a.z / b.z);
-}
-
-std::optional<vec3> projection(const vec3& projected, const vec3& onto) noexcept {
-	float b_len = onto.length_sq();
-	if( b_len == 0.0f ) return {};
-	
-	return (dot(projected, onto) / b_len ) * onto;
-}
-std::optional<vec3> rejection(const vec3& rejected, const vec3& from) noexcept {
-	return projection(rejected, from).transform([&rejected](const vec3& r){ return rejected - r; });
-}
-
-bvec4::bvec4(bool _x, bool _y, bool _z, bool _w) noexcept : x{_x}, y{_y}, z{_z}, w{_w} {}
-
-vec4::vec4(bool is_point) noexcept : x{0.0f}, y{0.0f}, z{0.0f}, w{is_point ? 1.0f : 0.0f} {}
-vec4::vec4(float _x, float _y, float _z, float _w) noexcept : x{_x}, y{_y}, z{_z}, w{_w} {}
-vec4::vec4(const vec3& v3, float _w) noexcept : x{v3.x}, y{v3.y}, z{v3.z}, w{_w} {}
-
-bool bvec4::all() const noexcept {
-	return ((x && y) && (y && z)) && (z && w);
-}
-bool bvec4::any() const noexcept {
-	return ((x || y) || (y || z)) || (z || w);
-}
-bool bvec4::none() const noexcept {
-	return ! any();
-}
-
-vec3 vec4::xyz() const noexcept {
-	return vec3{x, y, z};
-}
-
-vec4& vec4::operator+=(const vec4& other) noexcept {
-	x += other.x;
-	y += other.y;
-	z += other.z;
-	w += other.w;
-	return *this;
-}
-vec4& vec4::operator-=(const vec4& other) noexcept {
-	x -= other.x;
-	y -= other.y;
-	z -= other.z;
-	w -= other.w;
-	return *this;
-}
-vec4& vec4::operator*=(float scalar) noexcept {
-	x *= scalar;
-	y *= scalar;
-	z *= scalar;
-	w *= scalar;
-	return *this;
-}
-vec4& vec4::operator/=(float scalar) {
-	x /= scalar;
-	y /= scalar;
-	z /= scalar;
-	w /= scalar;
-	return *this;
-}
-
-vec4 vec4::operator-() const noexcept {
-	return vec4{-x, -y, -z, -w};
-}
-vec4 operator+(const vec4& a, const vec4& b) noexcept {
-	return vec4{a.x + b.x, a.y + b.y, a.z + b.z, a.w + b.w};
-}
-vec4 operator-(const vec4& a, const vec4& b) noexcept {
-	return vec4{a.x - b.x, a.y - b.y, a.z - b.z, a.w - b.w};
-}
-vec4 operator*(const vec4& v, float s) noexcept {
-	return vec4{v.x * s, v.y * s, v.z * s, v.w * s};
-}
-vec4 operator*(float s, const vec4& v) noexcept {
-	return v * s;
-}
-vec4 operator/(const vec4& v, float s) {
-	return vec4{v.x / s, v.y / s, v.z / s, v.w / s};
-}
-
-bool vec4::operator==(const vec4& other) const noexcept {
-	return (x == other.x) && (y == other.y) && (z == other.z) && (w == other.w);
-}
-bool vec4::operator!=(const vec4& other) const noexcept {
-	return (x != other.x) || (y != other.y) || (z != other.z) || (w != other.w);
-}
-
-float vec4::length() const noexcept {
-	return std::sqrt(x*x + y*y + z*z + w*w);
-}
-float vec4::length_sq() const noexcept {
-	return x*x + y*y + z*z + w*w;
-}
-vec4 vec4::normalized() const {
-	return *this / length();
-}
-vec4& vec4::normalize() {
-	float l = length();
-	x /= l;
-	y /= l;
-	z /= l;
-	w /= l;
-	return *this;
-}
-
-bvec4 is(const vec4& a, CwOp op, const vec4& b) noexcept {
-	switch(op) {
-		case LESS:
-			return bvec4(a.x < b.x, a.y < b.y, a.z < b.z, a.w < b.w);
-		case LESS_EQ:
-			return bvec4(a.x <= b.x, a.y <= b.y, a.z <= b.z, a.w <= b.w);
-		case GREATER:
-			return bvec4(a.x > b.x, a.y > b.y, a.z > b.z, a.w > b.w);
-		case GREATER_EQ:
-			return bvec4(a.x >= b.x, a.y >= b.y, a.z >= b.z, a.w >= b.w);
-		case EQ:
-			return bvec4(a.x == b.x, a.y == b.y, a.z == b.z, a.w == b.w);
-		case NOT_EQ:
-			return bvec4(a.x != b.x, a.y != b.y, a.z != b.z, a.w != b.w);
-		default:
-			std::unreachable();
-	}
-}
-
-bvec4 operator&&(const bvec4& a, const bvec4& b) noexcept {
-	return bvec4(a.x && b.x, a.y && b.y, a.z && b.z, a.w && b.w);
-}
-bvec4 operator||(const bvec4& a, const bvec4& b) noexcept {
-	return bvec4(a.x || b.x, a.y || b.y, a.z || b.z, a.w || b.w);
-}
-bvec4 operator!(const bvec4& b) noexcept {
-	return bvec4(! b.x, ! b.y, ! b.z, ! b.w);
-}
-
-vec4 mul(const vec4& a, const vec4& b) noexcept {
-	return vec4(a.x * b.x, a.y * b.y, a.z * b.z, a.w * b.w);
-}
-vec4 div(const vec4& a, const vec4& b) {
-	return vec4(a.x / b.x, a.y / b.y, a.z / b.z, a.w / b.w);
-}
-
-std::optional<vec4> projection(const vec4& projected, const vec4& onto) noexcept {
-	float b_len = onto.length_sq();
-	if( b_len == 0.0f ) return {};
-	
-	return (dot(projected, onto) / b_len ) * onto;
-}
-std::optional<vec4> rejection(const vec4& rejected, const vec4& from) noexcept {
-	return projection(rejected, from).transform([&rejected](const vec4& r){ return rejected - r; });
-}
-
-float dot(const vec2& a, const vec2& b) noexcept {
-	return (a.x * b.x + a.y * b.y);
-}
-float dot(const vec3& a, const vec3& b) noexcept {
-	return (a.x * b.x + a.y * b.y + a.z * b.z);
-}
-float dot(const vec4& a, const vec4& b) noexcept {
-	return (a.x * b.x + a.y * b.y + a.z * b.z + a.w * b.w);
-}
-
-vec3 cross(const vec3& a, const vec3& b) noexcept {
-	return vec3{ a.y * b.z - a.z * b.y, a.z * b.x - a.x * b.z, a.x * b.y - a.y * b.x };
-}
-
-std::optional<float> cos(const vec2& a, const vec2& b) noexcept {
-	float l = a.length() * b.length();
-	if( l == 0.0f ) {
-		return {}; //no value
-	} else {
-		return dot(a,b) / l;
-	}
-}
-std::optional<float> theta(const vec2& a, const vec2& b) noexcept {
-	return cos(a,b).transform([](float c){ return std::acos(c); });
-}
-
-std::optional<float> cos(const vec3& a, const vec3& b) noexcept {
-	float l = a.length() * b.length();
-	if( l == 0.0f ) {
-		return {}; //no value
-	} else {
-		return dot(a,b) / l;
-	}
-}
-std::optional<float> sin(const vec3& a, const vec3& b) noexcept {
-	float l = a.length() * b.length();
-	if( l == 0.0f ) {
-		return {}; //no value
-	} else {
-		return cross(a,b).length() / l;
-	}
-}
-std::optional<float> theta(const vec3& a, const vec3& b) noexcept {
-	return cos(a,b).transform([](float c){ return std::acos(c); });
-}
-
-std::optional<float> cos(const vec4& a, const vec4& b) noexcept {
-	float l = a.length() * b.length();
-	if( l == 0.0f ) {
-		return {}; //no value
-	} else {
-		return dot(a,b) / l;
-	}
-}
-std::optional<float> theta(const vec4& a, const vec4& b) noexcept {
-	return cos(a,b).transform([](float c){ return std::acos(c); });
-}
-
-float triple(const vec3& a, const vec3& b, const vec3& c) noexcept {
-	return dot(cross(a,b),c);
-}
-
-
-	
-};//! namespace vec
-
+#include "simd.inc.hpp"
 
 #ifndef HAS_SIMD
 
@@ -748,14 +209,12 @@ mat2 operator*(const mat2& a, const mat2& b) noexcept {
 	::vec::vec2 out;
 	
 	#ifdef HAS_SIMD
-	typedef simd::fixed_size_simd<float, 2> Sv;
+	simd::vec2 sv{v.data};
+	simd::vec2 row1{row(1).data};
+	simd::vec2 row2{row(2).data};
 	
-	Sv sv{v.data, simd::unaligned};
-	Sv col1; SIMD_INIT2(col1, m00, m01);
-	Sv col2; SIMD_INIT2(col2, m10, m11);
-	
-	out.x = simd::reduce(sv * col1);
-	out.y = simd::reduce(sv * col2);
+	out.x = simd::reduce(sv * row1);
+	out.y = simd::reduce(sv * row2);
 	#else
 	out.x = m00 * v.x + m01 * v.y;
 	out.y = m10 * v.x + m11 * v.y;
@@ -768,11 +227,9 @@ mat2 operator*(const mat2& a, const mat2& b) noexcept {
 	::vec::vec2 out;
 	
 	#ifdef HAS_SIMD
-	typedef simd::fixed_size_simd<float, 2> Sv;
-	
-	Sv sv{v.data, simd::unaligned};
-	Sv col1; SIMD_INIT2(col1, m.m00, m.m10);
-	Sv col2; SIMD_INIT2(col2, m.m01, m.m11);
+	simd::vec2 sv{v.data};
+	simd::vec2 col1{m.column(1).data};
+	simd::vec2 col2{m.column(2).data};
 	
 	out.x = simd::reduce(sv * col1);
 	out.y = simd::reduce(sv * col2);
@@ -860,9 +317,8 @@ mat2& mat2::transposed() noexcept {
 
 float mat2::det() const noexcept {
 	#ifdef HAS_SIMD
-	typedef simd::fixed_size_simd<float, 2> Mv;
-	Mv pair1; SIMD_INIT2(pair1, m00, m01);
-	Mv pair2; SIMD_INIT2(pair2, m11, m10);
+	simd::vec2 pair1; SIMD_INIT2(pair1, m00, m01);
+	simd::vec2 pair2; SIMD_INIT2(pair2, m11, m10);
 	return simd::reduce(pair1 * pair2);
 	#else
 	float result = 0.0f;
@@ -884,11 +340,6 @@ std::optional<mat2> mat2::inv() const noexcept {
 	};
 	return result * (1.0f / this_det);
 }
-	
-};//! namespace mat
-
-
-namespace mat {
 
 mat3::mat3() noexcept :
 	#ifdef GEOMETRY_MATRIX_ROW_MAJOR
@@ -1011,11 +462,9 @@ mat3 operator*(const mat3& a, const mat3& b) noexcept {
 	for(unsigned char r=1; r<=3; ++r) {
 		for(unsigned char c=1; c<=3; ++c) {
 			#ifdef HAS_SIMD
-			typedef simd::fixed_size_simd<float, 3> Sv;
-			
-			Sv sa{a.row(r).data, simd::unaligned};
-			Sv sb{b.column(c).data, simd::unaligned};
-			Sv sm = sa * sb;
+			simd::vec3 sa{a.row(r).data};
+			simd::vec3 sb{b.column(c).data};
+			simd::vec3 sm = sa * sb;
 			out.at(r,c) = simd::reduce(sm);
 			#else
 			auto v = vec::mul( a.row(r), b.column(c) );
@@ -1030,12 +479,10 @@ mat3 operator*(const mat3& a, const mat3& b) noexcept {
 	::vec::vec3 out;
 	
 	#ifdef HAS_SIMD
-	typedef simd::fixed_size_simd<float, 3> Sv;
-	
-	Sv sv{v.data, simd::unaligned};
-	Sv row1; SIMD_INIT3(row1, m00, m01, m02);
-	Sv row2; SIMD_INIT3(row2, m10, m11, m12);
-	Sv row3; SIMD_INIT3(row3, m20, m21, m22);
+	simd::vec3 sv{v.data};
+	simd::vec3 row1{row(1).data};
+	simd::vec3 row2{row(2).data};
+	simd::vec3 row3{row(3).data};
 	
 	out.x = simd::reduce(sv * row1);
 	out.y = simd::reduce(sv * row2);
@@ -1053,12 +500,10 @@ mat3 operator*(const mat3& a, const mat3& b) noexcept {
 	::vec::vec3 out;
 	
 	#ifdef HAS_SIMD
-	typedef simd::fixed_size_simd<float, 3> Sv;
-	
-	Sv sv{v.data, simd::unaligned};
-	Sv col1; SIMD_INIT3(col1, m.m00, m.m10, m.m20);
-	Sv col2; SIMD_INIT3(col2, m.m01, m.m11, m.m21);
-	Sv col3; SIMD_INIT3(col3, m.m02, m.m12, m.m22);
+	simd::vec3 sv{v.data};
+	simd::vec3 col1{m.column(1).data};
+	simd::vec3 col2{m.column(2).data};
+	simd::vec3 col3{m.column(3).data};
 	
 	out.x = simd::reduce(sv * col1);
 	out.y = simd::reduce(sv * col2);
@@ -1166,15 +611,13 @@ mat3& mat3::transposed() noexcept {
 
 float mat3::det() const noexcept {
 	#ifdef HAS_SIMD
-	typedef simd::fixed_size_simd<float, 3> Mv;
+	simd::vec3 triple1_p; SIMD_INIT3(triple1_p, m00, m01, m02);
+	simd::vec3 triple2_p; SIMD_INIT3(triple2_p, m11, m12, m10);
+	simd::vec3 triple3_p; SIMD_INIT3(triple3_p, m22, m20, m21);
 	
-	Mv triple1_p; SIMD_INIT3(triple1_p, m00, m01, m02);
-	Mv triple2_p; SIMD_INIT3(triple2_p, m11, m12, m10);
-	Mv triple3_p; SIMD_INIT3(triple3_p, m22, m20, m21);
-	
-	Mv triple1_n; SIMD_INIT3(triple1_n, m02, m01, m00);
-	Mv triple2_n; SIMD_INIT3(triple2_n, m11, m10, m12);
-	Mv triple3_n; SIMD_INIT3(triple3_n, m20, m22, m21);
+	simd::vec3 triple1_n; SIMD_INIT3(triple1_n, m02, m01, m00);
+	simd::vec3 triple2_n; SIMD_INIT3(triple2_n, m11, m10, m12);
+	simd::vec3 triple3_n; SIMD_INIT3(triple3_n, m20, m22, m21);
 	
 	return
 		simd::reduce(triple1_p * triple2_p * triple3_p)
@@ -1203,11 +646,6 @@ std::optional<mat3> mat3::inv() const noexcept {
 	result.row(3, ::vec::cross(a, b));
 	return result * (1.0f / this_det);
 }
-	
-};//! namespace mat
-
-
-namespace mat {
 
 mat4::mat4() noexcept :
 	#ifdef GEOMETRY_MATRIX_ROW_MAJOR
@@ -1341,11 +779,9 @@ mat4 operator*(const mat4& a, const mat4& b) noexcept {
 	for(unsigned char r=1; r<=4; ++r) {
 		for(unsigned char c=1; c<=4; ++c) {
 			#ifdef HAS_SIMD
-			typedef simd::fixed_size_simd<float, 4> Sv;
-			
-			Sv sa{a.row(r).data, simd::unaligned};
-			Sv sb{b.column(c).data, simd::unaligned};
-			Sv sv = sa * sb;
+			simd::vec4 sa{a.row(r).data};
+			simd::vec4 sb{b.column(c).data};
+			simd::vec4 sv = sa * sb;
 			
 			out.at(r,c) = simd::reduce(sv);
 			#else
@@ -1361,13 +797,11 @@ mat4 operator*(const mat4& a, const mat4& b) noexcept {
 	::vec::vec4 out;
 	
 	#ifdef HAS_SIMD
-	typedef simd::fixed_size_simd<float, 4> Sv;
-	
-	Sv sv{v.data, simd::unaligned};
-	Sv row1; SIMD_INIT4(row1, m00, m01, m02, m03);
-	Sv row2; SIMD_INIT4(row2, m10, m11, m12, m13);
-	Sv row3; SIMD_INIT4(row3, m20, m21, m22, m23);
-	Sv row4; SIMD_INIT4(row4, m30, m31, m32, m33);
+	simd::vec4 sv{v.data};
+	simd::vec4 row1{row(1).data};
+	simd::vec4 row2{row(2).data};
+	simd::vec4 row3{row(3).data};
+	simd::vec4 row4{row(4).data};
 	
 	out.x = simd::reduce(sv * row1);
 	out.y = simd::reduce(sv * row2);
@@ -1387,13 +821,11 @@ mat4 operator*(const mat4& a, const mat4& b) noexcept {
 	::vec::vec4 out;
 	
 	#ifdef HAS_SIMD
-	typedef simd::fixed_size_simd<float, 4> Sv;
-	
-	Sv sv{v.data, simd::unaligned};
-	Sv col1; SIMD_INIT4(col1, m.m00, m.m10, m.m20, m.m30);
-	Sv col2; SIMD_INIT4(col2, m.m01, m.m11, m.m21, m.m31);
-	Sv col3; SIMD_INIT4(col3, m.m02, m.m12, m.m22, m.m32);
-	Sv col4; SIMD_INIT4(col4, m.m03, m.m13, m.m23, m.m33);
+	simd::vec4 sv{v.data};
+	simd::vec4 col1{m.column(1).data};
+	simd::vec4 col2{m.column(2).data};
+	simd::vec4 col3{m.column(3).data};
+	simd::vec4 col4{m.column(4).data};
 	
 	out.x = simd::reduce(sv * col1);
 	out.y = simd::reduce(sv * col2);
@@ -1526,9 +958,7 @@ mat4& mat4::transposed() noexcept {
 
 float mat4::det() const noexcept {
 	#ifdef HAS_SIMD
-	typedef simd::fixed_size_simd<float, 3> Mv;
-	
-	Mv t1_p, t2_p, t3_p, t1_n, t2_n, t3_n;
+	simd::vec3 t1_p, t2_p, t3_p, t1_n, t2_n, t3_n;
 	float result = 0.0f;
 	
 	// column 1
@@ -1591,158 +1021,3 @@ std::optional<mat4> mat4::inv() const noexcept {
 }
 	
 };//! namespace mat
-
-
-
-namespace quat {
-	
-	Quaternion::Quaternion() noexcept : x{0.0f}, y{0.0f}, z{0.0f}, w{0.0f} {}
-	
-	Quaternion::Quaternion(float _x, float _y, float _z, float _w) noexcept :
-		x{_x}, y{_y}, z{_z}, w{_w} {}
-	
-	Quaternion::Quaternion(const ::vec::vec3& v, float s) noexcept :
-		x{v.x}, y{v.y}, z{v.z}, w{s} {}
-	
-	Quaternion::Quaternion(float s) noexcept : x{0.0f}, y{0.0f}, z{0.0f}, w{s} {}
-	
-	Quaternion& Quaternion::operator+=(const Quaternion& other) noexcept {
-		x += other.x;
-		y += other.y;
-		z += other.z;
-		w += other.w;
-		return *this;
-	}
-	
-	Quaternion& Quaternion::operator-=(const Quaternion& other) noexcept {
-		x -= other.x;
-		y -= other.y;
-		z -= other.z;
-		w -= other.w;
-		return *this;
-	}
-	
-	Quaternion& Quaternion::operator*=(const Quaternion& other) noexcept {
-		float _x = x * other.w + y * other.z - z * other.y + w * other.x;
-		float _y = y * other.w + z * other.x + w * other.y - x * other.z;
-		float _z = z * other.w + w * other.z + x * other.y - y * other.x;
-		float _w = w * other.w - x * other.x - y * other.y - z * other.z;
-		
-		x = _x; y = _y; z = _z; w = _w;
-		return *this;
-	}
-	
-	Quaternion& Quaternion::operator*=(float t) noexcept {
-		x *= t;
-		y *= t;
-		z *= t;
-		w *= t;
-		return *this;
-	}
-	
-	Quaternion& Quaternion::operator/=(const Quaternion& other) {
-		*this *= other.inv().value();
-		return *this;
-	}
-	Quaternion& Quaternion::operator/=(float t) {
-		*this *= Quaternion(t).inv().value();
-		return *this;
-	}
-	
-	Quaternion operator+(const Quaternion& lhs, const Quaternion& rhs) noexcept {
-		return {lhs.x + rhs.x, lhs.y + rhs.y, lhs.z + rhs.z, lhs.w + rhs.w};
-	}
-	
-	Quaternion operator-(const Quaternion& lhs, const Quaternion& rhs) noexcept {
-		return {lhs.x - rhs.x, lhs.y - rhs.y, lhs.z - rhs.z, lhs.w - rhs.w};
-	}
-	
-	Quaternion operator*(const Quaternion& lhs, const Quaternion& rhs) noexcept {
-		return Quaternion(
-			lhs.x * rhs.w + lhs.y * rhs.z - lhs.z * rhs.y + lhs.w * rhs.x,
-			lhs.y * rhs.w + lhs.z * rhs.x + lhs.w * rhs.y - lhs.x * rhs.z,
-			lhs.z * rhs.w + lhs.w * rhs.z + lhs.x * rhs.y - lhs.y * rhs.x,
-			lhs.w * rhs.w - lhs.x * rhs.x - lhs.y * rhs.y - lhs.z * rhs.z
-		);
-	}
-	
-	Quaternion operator*(const Quaternion& lhs, float t) noexcept {
-		return {lhs.x * t, lhs.y * t, lhs.z * t, lhs.w * t};
-	}
-	
-	Quaternion operator*(float t, const Quaternion& rhs) noexcept {
-		return {rhs.x * t, rhs.y * t, rhs.z * t, rhs.w * t};
-	}
-	
-	Quaternion operator/(const Quaternion& lhs, const Quaternion& rhs) {
-		return lhs * rhs.inv().value();
-	}
-	
-	Quaternion operator/(const Quaternion& lhs, float t) {
-		return lhs * Quaternion(t).inv().value();
-	}
-	
-	bool Quaternion::operator==(const Quaternion& other) const noexcept {
-		return (x==other.x) && (y==other.y) && (z==other.z) && (w==other.w);
-	}
-	
-	bool Quaternion::operator!=(const Quaternion& other) const noexcept {
-		return (x!=other.x) || (y!=other.y) || (z!=other.z) || (w!=other.w);
-	}
-	
-	Quaternion Quaternion::conj() const noexcept {
-		return {-x, -y, -z, w};
-	}
-	
-	float Quaternion::mag() const noexcept {
-		return std::sqrt(x*x + y*y + z*z + w*w);
-	}
-	
-	float Quaternion::norm() const noexcept {
-		return x*x + y*y + z*z + w*w;
-	}
-	
-	std::optional<Quaternion> Quaternion::inv() const noexcept {
-		float denom = x*x + y*y + z*z + w*w;
-		if( denom == 0.0f ) {
-			return std::nullopt;
-		}
-		return Quaternion(-x/denom, -y/denom, -z/denom, w/denom);
-	}
-	
-	Quaternion rotation_as_quat(const ::vec::vec3& a, float theta) noexcept {
-		float s = std::sin(theta/2.0f);
-		float c = std::cos(theta/2.0f);
-		return {s * a.x, s * a.y, s * a.z, c};
-	}
-	
-	::vec::vec3 rotate(const Quaternion& rot, const ::vec::vec3& v) {
-		Quaternion vq{v.x, v.y, v.z, 0.0f};
-		auto result = (rot * vq) / rot;
-		return ::vec::vec3(result.x, result.y, result.z);
-	}
-	
-	Quaternion combine_rotations(const Quaternion& prev, const Quaternion& next) noexcept {
-		return next * prev;
-	}
-	
-	::mat::mat3 as_mat3(const Quaternion& q) noexcept {
-		return {
-			1 - 2 * q.y * q.y - 2 * q.z * q.z, 2 * (q.x * q.y - q.w * q.z), 2 * (q.x * q.z + q.w * q.y),
-			2 * (q.x * q.y + q.w * q.z), 1 - 2 * q.x * q.x - 2 * q.z * q.z, 2 * (q.y * q.z - q.w * q.x),
-			2 * (q.x * q.z - q.w * q.y), 2 * (q.y * q.z + q.w * q.x), 1 - 2 * q.x * q.x - 2 * q.y * q.y
-		};
-	}
-	
-	::mat::mat4 as_mat4(const Quaternion& q) noexcept {
-		return {
-			1 - 2 * q.y * q.y - 2 * q.z * q.z, 2 * (q.x * q.y - q.w * q.z), 2 * (q.x * q.z + q.w * q.y), 0.0f,
-			2 * (q.x * q.y + q.w * q.z), 1 - 2 * q.x * q.x - 2 * q.z * q.z, 2 * (q.y * q.z - q.w * q.x), 0.0f,
-			2 * (q.x * q.z - q.w * q.y), 2 * (q.y * q.z + q.w * q.x), 1 - 2 * q.x * q.x - 2 * q.y * q.y, 0.0f,
-			0.0f, 0.0f, 0.0f, 1.0f
-		};
-	}
-	
-};//! namespace quat
-
-

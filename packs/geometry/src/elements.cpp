@@ -28,6 +28,7 @@ For more information, please refer to <https://unlicense.org>
 
 #include "elements.hpp"
 
+#include "matrices.hpp"
 #include <cmath>
 
 inline float sq(float a) { return a * a; }
