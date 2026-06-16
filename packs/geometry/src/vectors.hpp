@@ -34,6 +34,7 @@ For more information, please refer to <https://unlicense.org>
 #include <stdexcept>
 #include <tuple>
 #include <type_traits>
+#include <ostream>
 
 namespace vec {
 	struct bvec2;
@@ -83,6 +84,7 @@ namespace vec {
 	bvec2 operator&&(const bvec2& a, const bvec2& b) noexcept;
 	bvec2 operator||(const bvec2& a, const bvec2& b) noexcept;
 	bvec2 operator!(const bvec2& b) noexcept;
+	std::ostream& operator<<(std::ostream& os, const bvec2& bv) noexcept;
 	
 	struct bvec3 {
 		bool x, y, z;
@@ -102,6 +104,7 @@ namespace vec {
 	bvec3 operator&&(const bvec3& a, const bvec3& b) noexcept;
 	bvec3 operator||(const bvec3& a, const bvec3& b) noexcept;
 	bvec3 operator!(const bvec3& b) noexcept;
+	std::ostream& operator<<(std::ostream& os, const bvec3& bv) noexcept;
 	
 	struct bvec4 {
 		bool x, y, z, w;
@@ -121,6 +124,7 @@ namespace vec {
 	bvec4 operator&&(const bvec4& a, const bvec4& b) noexcept;
 	bvec4 operator||(const bvec4& a, const bvec4& b) noexcept;
 	bvec4 operator!(const bvec4& b) noexcept;
+	std::ostream& operator<<(std::ostream& os, const bvec4& bv) noexcept;
 	
 	#pragma pack(4)
 	
@@ -183,6 +187,7 @@ namespace vec {
 	[[nodiscard]] vec2 operator*(const vec2& v, float s) noexcept;
 	[[nodiscard]] vec2 operator*(float s, const vec2& v) noexcept;
 	[[nodiscard]] vec2 operator/(const vec2& v, float s);
+	std::ostream& operator<<(std::ostream& os, const vec2& v) noexcept;
 	
 	struct vec3 {
 		union {
@@ -262,6 +267,7 @@ namespace vec {
 	[[nodiscard]] vec3 operator*(const vec3& v, float s) noexcept;
 	[[nodiscard]] vec3 operator*(float s, const vec3& v) noexcept;
 	[[nodiscard]] vec3 operator/(const vec3& v, float s);
+	std::ostream& operator<<(std::ostream& os, const vec3& v) noexcept;
 	
 	struct vec4 {
 		union {
@@ -342,6 +348,7 @@ namespace vec {
 	[[nodiscard]] vec4 operator*(const vec4& v, float s) noexcept;
 	[[nodiscard]] vec4 operator*(float s, const vec4& v) noexcept;
 	[[nodiscard]] vec4 operator/(const vec4& v, float s);
+	std::ostream& operator<<(std::ostream& os, const vec4& v) noexcept;
 	
 	#pragma pack()
 	

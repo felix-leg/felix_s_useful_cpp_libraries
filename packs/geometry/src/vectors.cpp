@@ -30,6 +30,7 @@ For more information, please refer to <https://unlicense.org>
 
 #include <utility>
 #include <cmath>
+#include <format>
 
 namespace vec {
 	
@@ -541,6 +542,34 @@ float triple(const vec3& a, const vec3& b, const vec3& c) noexcept {
 	return dot(cross(a,b),c);
 }
 
+std::ostream& operator<<(std::ostream& os, const bvec2& bv) noexcept {
+	os << "{" << std::format("{}, {}", bv.x, bv.y) << "}";
+	return os;
+}
 
-	
+std::ostream& operator<<(std::ostream& os, const bvec3& bv) noexcept {
+	os << "{" << std::format("{}, {}, {}", bv.x, bv.y, bv.z) << "}";
+	return os;
+}
+
+std::ostream& operator<<(std::ostream& os, const bvec4& bv) noexcept {
+	os << "{" << std::format("{}, {}, {}, {}", bv.x, bv.y, bv.z, bv.w) << "}";
+	return os;
+}
+
+std::ostream& operator<<(std::ostream& os, const vec2& v) noexcept {
+	os << "{" << std::format("{}, {}", v.x, v.y) << "}";
+	return os;
+}
+
+std::ostream& operator<<(std::ostream& os, const vec3& v) noexcept {
+	os << "{" << std::format("{}, {}, {}", v.x, v.y, v.z) << "}";
+	return os;
+}
+
+std::ostream& operator<<(std::ostream& os, const vec4& v) noexcept {
+	os << "{" << std::format("{}, {}, {}, {}", v.x, v.y, v.z, v.w) << "}";
+	return os;
+}
+
 };//! namespace vec
