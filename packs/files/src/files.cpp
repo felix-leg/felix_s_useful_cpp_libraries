@@ -338,6 +338,12 @@ namespace files {
 		return true;
 	}
 	
+	std::uintmax_t Path::file_size() const noexcept try {
+		return std::filesystem::file_size(path_obj);
+	} catch(const std::filesystem::filesystem_error& e) {
+		return 0u;
+	}
+	
 	void Path::touch() const noexcept {
 		if( exists() ) { return; }
 		parent().mkdir(true);

@@ -121,6 +121,7 @@ namespace files {
 		[[nodiscard]] AttributeState get_special_attr(SpecialAttribute attr) const noexcept;
 		/// checks if path contains only valid characters
 		[[nodiscard]] bool is_valid() const noexcept;
+		[[nodiscard]] std::uintmax_t file_size() const noexcept;
 		
 		void touch() const noexcept;
 		bool mkdir(bool recursive = true) const noexcept;
