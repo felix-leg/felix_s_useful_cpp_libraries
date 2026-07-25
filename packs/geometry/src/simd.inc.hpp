@@ -25,7 +25,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 For more information, please refer to <https://unlicense.org>
 
 */
-#if __has_include(<simd>)
+#if __has_include(<simd>) && __cpp_lib_simd >= 202411L
 #	include <simd>
 #	define HAS_SIMD
 #endif
